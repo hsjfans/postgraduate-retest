@@ -863,8 +863,93 @@ void pat_1066()
     }
 }
 
+void pat_1036()
+{
+}
+
+void check_passward(string pwd)
+{
+    bool number, alphabet = number = false;
+    char tmp;
+    if (pwd.length() < 6)
+    {
+        cout << "Your password is tai duan le.";
+        return;
+    }
+    for (int i = 0; i < pwd.length(); i++)
+    {
+        tmp = pwd[i];
+        if (tmp <= '9' && tmp >= '0')
+        {
+            number = true;
+        }
+        else if ((tmp <= 'z' && tmp >= 'a') || (tmp <= 'Z' && tmp >= 'A'))
+        {
+            alphabet = true;
+        }
+        else if (tmp != '.')
+        {
+            cout << "Your password is tai luan le.";
+            return;
+        }
+    }
+
+    if (number && alphabet)
+    {
+        cout << "Your password is wan mei.";
+    }
+    else if (alphabet)
+    {
+        cout << "Your password needs shu zi.";
+    }
+    else
+    {
+        cout << "Your password needs zi mu.";
+    }
+}
+
+void pat_1081()
+{
+    int n;
+    string pwd;
+    cin >> n;
+    bool first = true;
+    while (n > 0)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            cout << "\n";
+        }
+        cin >> pwd;
+        // cout << pwd << "\n";
+        check_passward(pwd);
+        n--;
+    }
+}
+
+void pat_1076()
+{
+    string str;
+    while (cin >> str)
+    {
+        if (str.size() == 3 && str[2] == 'T')
+        {
+            cout << str[0] - 'A' + 1;
+        }
+    }
+}
+
+void pat_1071()
+{
+
+}
+
 int main()
 {
-    pat_1026();
+    pat_1076();
     return 0;
 }

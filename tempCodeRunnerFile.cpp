@@ -1,32 +1,31 @@
-void pat_1086()
+void split_str(string str)
 {
-    int a, b, tmp;
-    cin >> a >> b;
-    int g = a * b;
-    int bitwide = 0;
-    while (g >= pow(10, bitwide))
+    int start = 2;
+    for (int i = start; i < str.length(); i += 4)
     {
-        bitwide++;
+        if (str[i] == 'T')
+        {
+            cout << (str[i - 2] - 'A');
+            return;
+        }
     }
-    // cout << bitwide << "\n";
-    int high;
-    int cache[bitwide];
-    for (int i = bitwide - 1; i >= 0; i--)
+}
+
+void pat_1076()
+{
+    int n;
+    cin >> n;
+    string str;
+    while (n > 0)
     {
-        tmp = pow(10, i);
-        high = g / tmp;
-        g = g - tmp * high;
-        // cout << high;
-        cache[i] = high;
-    }
-    for (int i = 0; i < bitwide; i++)
-    {
-        cout << cache[i];
+        cin >> str;
+        split_str(str);
+        n--;
     }
 }
 
 int main()
 {
-    pat_1086();
+    pat_1076();
     return 0;
 }
