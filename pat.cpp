@@ -945,11 +945,47 @@ void pat_1076()
 
 void pat_1071()
 {
-
+    int t, k;
+    cin >> t >> k;
+    int n1, b, reward, n2;
+    int p = k;
+    while (k > 0)
+    {
+        if (k < p)
+        {
+            cout << "\n";
+        }
+        k--;
+        cin >> n1 >> b >> reward >> n2;
+        if (reward > t)
+        {
+            printf("Not enough tokens.  Total = %d.", t);
+            // return;
+            continue;
+        }
+        if ((n2 > n1 && b == 1) || (n2 < n1 && b == 0))
+        {
+            t += reward;
+            printf("Win %d!  Total = %d.", reward, t);
+        }
+        else
+        {
+            if (reward <= t)
+            {
+                t -= reward;
+                printf("Lose %d.  Total = %d.", reward, t);
+                if (t == 0)
+                {
+                    printf("\nGame Over.");
+                    return;
+                }
+            }
+        }
+    }
 }
 
 int main()
 {
-    pat_1076();
+    pat_1071();
     return 0;
 }
