@@ -612,34 +612,6 @@ void pat_1014()
         }
     }
 }
-
-typedef struct graduate
-{
-    char id[8];
-    int ethics;
-    int tech;
-    int total;
-} Graduate;
-
-void sort_graduates(Graduate graduates[])
-{
-}
-
-void pat_1015()
-{
-    int n, l, h;
-    cin >> n >> l >> h;
-    Graduate graduate;
-    Graduate graduates_out[n];
-    int i = 0;
-    while (i < n)
-    {
-        scanf("%s %d %d", graduate.id, &graduate.ethics, &graduate.tech);
-        graduate.total = graduate.ethics + graduate.tech;
-        i++;
-    }
-}
-
 int get_pa(int a, int da)
 {
     int p = 9, tmp;
@@ -776,10 +748,17 @@ void pat_1086()
 {
     int a, b;
     cin >> a >> b;
+    bool first = true;
     string t = to_string(a * b);
     for (int i = t.length() - 1; i >= 0; i--)
     {
-        cout << t[i];
+        if (t[i] != '0')
+        {
+            cout << t[i];
+            first = false;
+        }
+        else if (!first)
+            cout << t[i];
     }
 }
 
@@ -850,87 +829,6 @@ void pat_1026()
     printf("%02d:%02d:%02d", h, m, s);
 }
 
-void pat_1066()
-{
-    int m, n, a, b, grey;
-    cin >> m >> n >> a >> b >> grey;
-    string result;
-    for (int i = 0; i < m; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-        }
-    }
-}
-
-void pat_1036()
-{
-}
-
-void check_passward(string pwd)
-{
-    bool number, alphabet = number = false;
-    char tmp;
-    if (pwd.length() < 6)
-    {
-        cout << "Your password is tai duan le.";
-        return;
-    }
-    for (int i = 0; i < pwd.length(); i++)
-    {
-        tmp = pwd[i];
-        if (tmp <= '9' && tmp >= '0')
-        {
-            number = true;
-        }
-        else if ((tmp <= 'z' && tmp >= 'a') || (tmp <= 'Z' && tmp >= 'A'))
-        {
-            alphabet = true;
-        }
-        else if (tmp != '.')
-        {
-            cout << "Your password is tai luan le.";
-            return;
-        }
-    }
-
-    if (number && alphabet)
-    {
-        cout << "Your password is wan mei.";
-    }
-    else if (alphabet)
-    {
-        cout << "Your password needs shu zi.";
-    }
-    else
-    {
-        cout << "Your password needs zi mu.";
-    }
-}
-
-void pat_1081()
-{
-    int n;
-    string pwd;
-    cin >> n;
-    bool first = true;
-    while (n > 0)
-    {
-        if (first)
-        {
-            first = false;
-        }
-        else
-        {
-            cout << "\n";
-        }
-        cin >> pwd;
-        // cout << pwd << "\n";
-        check_passward(pwd);
-        n--;
-    }
-}
-
 void pat_1076()
 {
     string str;
@@ -984,8 +882,374 @@ void pat_1071()
     }
 }
 
+int weight[17] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
+int code[11] = {'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'};
+
+bool isTrue(string str)
+{
+    int total = 0;
+    for (int i = 0; i < 17; i++)
+    {
+        if (!(str[i] >= '0' && str[i] <= '9'))
+            return false;
+
+        total += (str[i] - '0') * weight[i];
+    }
+    return code[total % 11] == str[17];
+}
+
+void pat_1031()
+{
+
+    int n, flag = 1;
+    bool first = true;
+    cin >> n;
+    string str;
+    while (n > 0)
+    {
+        cin >> str;
+        if (!isTrue(str))
+        {
+            cout << str << endl;
+            flag = 0;
+        }
+        n--;
+    }
+    if (flag)
+    {
+        cout << "All passed";
+    }
+}
+
+void check_passward(string pwd)
+{
+    if (pwd.length() < 6)
+    {
+        // cout << "Your password is tai duan le.\n";
+        printf("Your password is tai duan le.\n");
+        return;
+    }
+    bool number, invalid, alphabet = number = invalid = false;
+    for (unsigned int i = 0; i < pwd.length(); i++)
+    {
+        if (iswalpha(pwd[i]))
+        {
+            alphabet = true;
+        }
+        else if (iswdigit(pwd[i]))
+        {
+            number = true;
+        }
+        else if (pwd[i] != '.')
+        {
+            invalid = true;
+            break;
+        }
+    }
+    if (invalid)
+    {
+        printf("Your password is tai luan le.\n");
+    }
+    else if (alphabet && !number)
+    {
+        printf("Your password needs shu zi.\n");
+    }
+    else if (number && !alphabet)
+    {
+        printf("Your password needs zi mu.\n");
+    }
+    else
+    {
+        printf("Your password is wan mei.\n");
+    }
+}
+
+void pat_1081()
+{
+    int n;
+    string pwd;
+    cin >> n;
+    getchar();
+    while (n--)
+    {
+        getline(cin, pwd);
+        check_passward(pwd);
+    }
+}
+
+void pat_1036()
+{
+    int n;
+    char c;
+    scanf("%d %c", &n, &c);
+    int column = round(n / 2.0);
+    string start;
+    start += c;
+    string content = start;
+    for (int i = 1; i < n - 1; i++)
+    {
+        start += c;
+        content += " ";
+    }
+    content += c;
+    start += c;
+    cout << start << "\n";
+    for (int i = 1; i < column - 1; i++)
+    {
+        cout << content << "\n";
+    }
+    cout << start;
+}
+
+void pat_1041()
+{
+    int n;
+    cin >> n;
+    string cache[n + 1];
+    int seatId, testId;
+    string number;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> number >> seatId >> testId;
+        cache[seatId] = number + " " + to_string(testId);
+    }
+
+    int m, seat;
+    cin >> m;
+    while (m--)
+    {
+        cin >> seat;
+        cout << cache[seat] << endl;
+    }
+}
+
+void pat_1046()
+{
+    int n;
+    cin >> n;
+    int a, b = a = 0;
+    int pa, qa, pb, qb;
+    bool at, bt;
+    while (n--)
+    {
+        cin >> pa >> qa >> pb >> qb;
+        at = qa == (pa + pb);
+        bt = qb == (pa + pb);
+        if (at && bt)
+        {
+            continue;
+        }
+        else if (!at && !bt)
+        {
+            continue;
+        }
+        else if (at)
+        {
+            b++;
+        }
+        else
+        {
+            a++;
+        }
+    }
+    printf("%d %d", a, b);
+}
+
+void pat_1051()
+{
+
+    float r1, p1, r2, p2;
+    cin >> r1 >> p1 >> r2 >> p2;
+    float a,
+        b, c, d, e, f;
+    a = r1 * cos(p1);
+    b = r1 * sin(p1);
+    c = r2 * cos(p2);
+    d = r2 * sin(p2);
+    e = a * c - b * d;
+    f = a * d + b * c;
+    printf("%.2f%.2fi", e, f);
+}
+
+void pat_1056()
+{
+    int n;
+    cin >> n;
+    int sum = 0;
+    int tmp[n];
+    for (int i = 0; i < n; i++)
+    {
+        cin >> tmp[i];
+    }
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (i != j)
+            {
+                sum += 10 * tmp[i] + tmp[j];
+            }
+        }
+    }
+    cout << sum;
+}
+
+void pat_1061()
+{
+    int n, m;
+    cin >> n >> m;
+    int scores[m];
+    int answers[m];
+    for (int i = 0; i < m; i++)
+    {
+        cin >> scores[i];
+    }
+    for (int i = 0; i < m; i++)
+    {
+        cin >> answers[i];
+    }
+    int sum, tmp;
+    for (int j = 0; j < n; j++)
+    {
+        sum = 0;
+        for (int i = 0; i < m; i++)
+        {
+            cin >> tmp;
+            // cout << tmp;
+            if (tmp == answers[i])
+                sum += scores[i];
+        }
+        cout << sum << endl;
+    }
+}
+
+void pat_1066()
+{
+    int m, n, a, b, alter;
+    cin >> m >> n >> a >> b >> alter;
+    int p;
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cin >> p;
+            if (p <= b && p >= a)
+            {
+                p = alter;
+            }
+            printf("%03d", p);
+            if (j == n - 1)
+            {
+                printf("\n");
+            }
+            else
+            {
+                printf(" ");
+            }
+        }
+    }
+}
+
+void pat_1017()
+{
+    string a;
+    int b, tmp, last, next = last = 0;
+    cin >> a >> b;
+    bool zero = false;
+    for (int i = 0; i < a.size(); i++)
+    {
+        tmp = (a[i] - '0') + last * 10;
+        next = tmp / b;
+        last = tmp % b;
+        // cout << tmp << " " << next << " " << last << endl;
+        if (next > 0)
+            zero = true;
+        if (zero)
+            cout << next;
+    }
+    if (!zero)
+        cout << 0;
+    cout << " "
+         << last;
+}
+
+typedef struct a_student
+{
+    int id;
+    int ethicsId;
+    int intelligentId;
+    int sum;
+} AStudent;
+
+int cmp(AStudent s1, AStudent s2)
+{
+    // cout << s1.id << " " << s2.id << " " << s1.sum << " " << s2.sum << endl;
+    // return s1.sum > s2.sum;
+    if (s1.sum > s2.sum)
+    {
+        return 1;
+    }
+    else if (s1.sum == s2.sum && s1.ethicsId > s2.ethicsId)
+    {
+        return 1;
+    }
+    return s1.sum == s2.sum && s1.ethicsId == s2.ethicsId && s1.id < s2.id;
+}
+
+void print_f(vector<AStudent> a_students)
+{
+    int num = a_students.size();
+    for (int i = 0; i < num; i++)
+    {
+        printf("%d %d %d\n", a_students[i].id, a_students[i].ethicsId, a_students[i].intelligentId);
+    }
+}
+
+void pat_1015()
+{
+    int num, l, h, i = 0;
+    cin >> num >> l >> h;
+    vector<AStudent> p1, p2, p3, p4;
+    AStudent tmp;
+    while (i++ < num)
+    {
+        scanf("%d %d %d", &tmp.id, &tmp.ethicsId, &tmp.intelligentId);
+        // cout << " input " << tmp.id << endl;
+        tmp.sum = tmp.ethicsId + tmp.intelligentId;
+        if (tmp.ethicsId < l || tmp.intelligentId < l)
+        {
+            continue;
+        }
+        if (tmp.ethicsId >= h && tmp.intelligentId >= h)
+        {
+            p1.push_back(tmp);
+        }
+        else if (tmp.ethicsId >= h && tmp.intelligentId < h)
+        {
+            p2.push_back(tmp);
+        }
+        else if (tmp.ethicsId < h && tmp.intelligentId < h && tmp.ethicsId >= tmp.intelligentId)
+        {
+            p3.push_back(tmp);
+        }
+        else
+        {
+            p4.push_back(tmp);
+        }
+    }
+    sort(p1.begin(), p1.end(), cmp);
+    sort(p2.begin(), p2.end(), cmp);
+    sort(p3.begin(), p3.end(), cmp);
+    sort(p4.begin(), p4.end(), cmp);
+    cout << p1.size() + p2.size() + p3.size() + p4.size() << endl;
+    print_f(p1);
+    print_f(p2);
+    print_f(p3);
+    print_f(p4);
+}
+
 int main()
 {
-    pat_1071();
+    pat_1015();
     return 0;
 }

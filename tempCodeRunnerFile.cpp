@@ -1,31 +1,19 @@
-void split_str(string str)
-{
-    int start = 2;
-    for (int i = start; i < str.length(); i += 4)
+int n;
+    cin >> n;
+    int sum = 0;
+    int tmp[n];
+    for (int i = 0; i < n; i++)
     {
-        if (str[i] == 'T')
+        cin >> tmp[i];
+    }
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
         {
-            cout << (str[i - 2] - 'A');
-            return;
+            if (i != j)
+            {
+                sum += 10 * tmp[i] + tmp[j];
+            }
         }
     }
-}
-
-void pat_1076()
-{
-    int n;
-    cin >> n;
-    string str;
-    while (n > 0)
-    {
-        cin >> str;
-        split_str(str);
-        n--;
-    }
-}
-
-int main()
-{
-    pat_1076();
-    return 0;
-}
+    cout << sum;

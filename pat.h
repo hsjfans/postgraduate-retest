@@ -17,6 +17,6 @@
 #include <stack>
 #include <stdlib.h>
 #include <regex>
-
+#include <algorithm>
 
 #endif
