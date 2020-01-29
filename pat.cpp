@@ -1248,8 +1248,97 @@ void pat_1015()
     print_f(p4);
 }
 
+int cmp_1019(char a, char b)
+{
+    return a > b;
+}
+
+void pat_1019()
+{
+    string s, a, b;
+    cin >> s;
+    string res;
+    s.insert(0, 4 - s.size(), '0');
+    do
+    {
+        a = s, b = s;
+        sort(a.begin(), a.end(), cmp_1019);
+        sort(b.begin(), b.end());
+        res = to_string(stoi(a) - stoi(b));
+        res.insert(0, 4 - res.size(), '0');
+        cout << a << " - " << b << " = " << res << endl;
+        s = res;
+    } while (res != "0000" && res != "6174");
+}
+
+typedef struct moon
+{
+    float stock, price, profit;
+} Moon;
+
+int cmp_1020(Moon m1, Moon m2)
+{
+    return m1.profit < m2.profit;
+}
+
+void pat_1020()
+{
+    int n, d;
+    cin >> n >> d;
+    float stock[n], price[n], profit, sum = 0;
+    Moon m[n];
+    int i, j = i = 0;
+    while (i < n || j < n)
+    {
+        if (i < n)
+            cin >> stock[i++];
+        else
+            cin >> price[j++];
+    }
+    for (i = 0; i < n; i++)
+    {
+        profit = price[i] / stock[i];
+        m[i].stock = stock[i];
+        m[i].price = price[i];
+        m[i].profit = profit;
+    }
+    sort(m, m + n, cmp_1020);
+    for (i = n - 1; i >= 0 && d > 0; i--)
+    {
+        // cout << m[i].stock << " " << m[i].price << "  stock " << d << endl;
+        if (d >= m[i].stock)
+        {
+            sum += m[i].price;
+            d -= m[i].stock;
+        }
+        else
+        {
+            sum += m[i].profit * d;
+            break;
+        }
+    }
+    printf("%.2f", sum);
+}
+
+void pat_1022()
+{
+    int a, b, d, sum, p;
+    string res;
+    cin >> a >> b >> d;
+    sum = a + b;
+    while (sum)
+    {
+        p = sum % d;
+        sum = sum / d;
+        res = to_string(p) + res;
+    }
+    if (res.size() > 0)
+        cout << res;
+    else
+        cout << "0";
+}
 int main()
 {
-    pat_1015();
+    pat_1022();
     return 0;
 }
