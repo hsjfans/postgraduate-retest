@@ -630,10 +630,6 @@ int get_pa(int a, int da)
     return p;
 }
 
-void pat_1095()
-{
-}
-
 void pat_1096()
 {
 }
@@ -1337,8 +1333,258 @@ void pat_1022()
     else
         cout << "0";
 }
+
+void pat_1023()
+{
+
+    int p[10];
+    for (int i = 0; i < 10; i++)
+    {
+        cin >> p[i];
+    }
+    bool small = true;
+    for (int i = 1; i < 10; i++)
+    {
+        for (int j = 0; j < p[i]; j++)
+        {
+            cout << i;
+            if (small)
+            {
+                for (int k = 0; k < p[0]; k++)
+                {
+                    cout << 0;
+                }
+                small = false;
+            }
+        }
+    }
+}
+
+// standard file head
+typedef struct pat_student
+{
+    string number;
+    char level;
+    int plaId;
+    string date;
+    int stuId;
+    int score;
+} PStudent;
+
+typedef struct place
+{
+    int plaId;
+    int sum;
+} Place;
+
+/**
+第 1 位是级别，即 T 代表顶级；A 代表甲级；B 代表乙级；
+第 2~4 位是考场编号，范围从 101 到 999；
+第 5~10 位是考试日期，格式为年、月、日顺次各占 2 位；
+最后 11~13 位是考生编号，范围从 000 到 999。
+*/
+PStudent
+parseStudent(string number, int score)
+{
+    // printf("number -> %s \n ", number.c_str());
+    PStudent student;
+    student.number = number;
+    student.level = number[0];
+    student.plaId = stoi(number.substr(1, 3));
+    student.date = number.substr(4, 6);
+    student.stuId = stoi(number.substr(10, 3));
+    student.score = score;
+    return student;
+}
+
+int cmp_1(PStudent s1, PStudent s2)
+{
+    if (s1.score != s2.score)
+    {
+        return s1.score > s2.score;
+    }
+    return s1.number < s2.number;
+}
+
+int cmp_2(Place p1, Place p2)
+{
+    if (p1.sum != p2.sum)
+        return p1.sum > p2.sum;
+    return p1.plaId < p2.plaId;
+}
+
+void pat_1095()
+{
+    int n, m, l, t, score;
+    cin >> n >> m;
+    PStudent students[n];
+    l = n, t = m;
+    char number[13];
+    while (n--)
+    {
+        scanf("%s %d", number, &score);
+        students[n] = parseStudent(number, score);
+    }
+    int code, g;
+    char p[6];
+    while (m--)
+    {
+        scanf("%d %s", &code, p);
+        printf("Case %d: %d %s\n", t - m, code, p);
+        bool ok = true;
+        if (code == 1)
+        {
+            // 类型 为 1 的指令，输出格式与输入的考生信息格式相同，即 准考证号 成绩。
+            // 对于分数并列的考生，按其准考证号的字典序递增输出（题目保证无重复准考证号）；
+            sort(students, students + l, cmp_1);
+            for (int i = 0; i < l; i++)
+            {
+                if (students[i].level == p[0])
+                {
+                    printf("%s %d\n", students[i].number.c_str(), students[i].score);
+                    ok = false;
+                }
+            }
+        }
+        else if (code == 2)
+        {
+            int amount, sum = amount = 0;
+            int pl = stoi(p);
+            for (int i = 0; i < l; i++)
+            {
+                if (students[i].plaId == pl)
+                {
+                    ok = false;
+                    sum += students[i].score;
+                    amount++;
+                }
+            }
+            if (!ok)
+            {
+                printf("%d %d\n", amount, sum);
+            }
+        }
+        else if (code == 3)
+        {
+            ok = l == 0;
+            Place places[1000];
+            for (int i = 0; i < 1000; i++)
+            {
+                places[i].plaId = i;
+                places[i].sum = 0;
+            }
+            for (int i = 0; i < l; i++)
+            {
+                if (students[i].date == p)
+                {
+                    places[students[i].plaId].sum++;
+                }
+            }
+
+            sort(places, places + 1000, cmp_2);
+            for (int i = 0; i < 1000; i++)
+            {
+                if (places[i].sum > 0)
+                {
+                    printf("%d %d\n", places[i].plaId, places[i].sum);
+                }
+            }
+        }
+        if (ok)
+            cout << "NA\n";
+    }
+}
+
+void pat_1093()
+{
+    string res, tmp;
+    int map[127];
+    for (int i = 31; i < 127; i++)
+        map[i] = 0;
+    int n = 2;
+    while (n--)
+    {
+        getline(cin, tmp);
+        // cout << tmp << endl;
+        for (int i = 0; i < tmp.size(); i++)
+        {
+            int c = tmp[i];
+            // cout << c << " c " << tmp[i] << endl;
+            if (c >= 32 && c <= 126)
+            {
+                if (map[c] == 0)
+                {
+                    res += c;
+                    map[c] = 1;
+                }
+            }
+        }
+    }
+    cout << res;
+}
+
+void pat_1092()
+{
+    int n, m, tmp, sum_max = 0;
+    scanf("%d %d", &n, &m);
+    int stock[n];
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            scanf("%d", &tmp);
+            if (i == 0)
+                stock[j] = 0;
+            stock[j] += tmp;
+            if (stock[j] > sum_max)
+                sum_max = stock[j];
+        }
+    }
+
+    cout << sum_max << endl;
+    bool first = true;
+    for (int i = 0; i < n; i++)
+    {
+        if (stock[i] == sum_max)
+        {
+            if (!first)
+                cout << " ";
+            else
+                first = false;
+            cout << i + 1;
+        }
+    }
+}
+
+void pat_1090()
+{
+
+    int k, n;
+    cin >> k >> n;
+    map<string, vector<string>> maps;
+    string str1, str2;
+    while (k--)
+    {
+        cin >> str1 >> str2;
+        vector<string> values = maps.at(str1);
+        values.push_back(str2);
+    }
+    int num;
+    bool repeat = false;
+    string key;
+    while (n--)
+    {
+        cin >> num;
+        while (num--)
+        {
+            cin >> key;
+            vector<string> values = maps.at(str1);
+        }
+    }
+}
+
 int main()
 {
-    pat_1022();
+    pat_1090();
     return 0;
 }
