@@ -1556,35 +1556,36 @@ void pat_1092()
     }
 }
 
-void pat_1090()
-{
+// void pat_1090()
+// {
 
-    int k, n;
-    cin >> k >> n;
-    map<string, vector<string>> maps;
-    string str1, str2;
-    while (k--)
-    {
-        cin >> str1 >> str2;
-        vector<string> values = maps.at(str1);
-        values.push_back(str2);
-    }
-    int num;
-    bool repeat = false;
-    string key;
-    while (n--)
-    {
-        cin >> num;
-        while (num--)
-        {
-            cin >> key;
-            vector<string> values = maps.at(str1);
-        }
-    }
-}
+//     int k, n;
+//     cin >> k >> n;
+//     map<string, vector<string>> maps;
+//     string str1, str2;
+//     while (k--)
+//     {
+//         cin >> str1 >> str2;
+//         vector<string> values = maps.at(str1);
+//         values.push_back(str2);
+//     }
+//     int num;
+//     bool repeat = false;
+//     string key;
+//     while (n--)
+//     {
+//         cin >> num;i
+//         while (num--)
+//         {
+//             cin >> key;
+//             vector<string> values = maps.at(str1);
+//         }
+//     }
+// }
 
 int main()
 {
-    pat_1090();
+    // pat_1090();
+    // cout << "hello world" << endl;
     return 0;
 }
