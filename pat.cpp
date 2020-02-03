@@ -1556,36 +1556,586 @@ void pat_1092()
     }
 }
 
-// void pat_1090()
-// {
-
-//     int k, n;
-//     cin >> k >> n;
-//     map<string, vector<string>> maps;
-//     string str1, str2;
-//     while (k--)
-//     {
-//         cin >> str1 >> str2;
-//         vector<string> values = maps.at(str1);
-//         values.push_back(str2);
-//     }
-//     int num;
-//     bool repeat = false;
-//     string key;
-//     while (n--)
-//     {
-//         cin >> num;i
-//         while (num--)
-//         {
-//             cin >> key;
-//             vector<string> values = maps.at(str1);
-//         }
-//     }
-// }
-
-int main()
+void pat_1090()
 {
-    // pat_1090();
-    // cout << "hello world" << endl;
+
+    int k, n;
+    cin >> k >> n;
+    map<string, vector<string>> maps;
+    string str1, str2;
+    while (k--)
+    {
+        // double trend
+        cin >> str1 >> str2;
+        maps[str1].push_back(str2);
+    }
+    int num;
+    string key;
+    bool repeat;
+    while (n--)
+    {
+        // 每次初始化一下
+        repeat = false;
+        cin >> num;
+        map<string, int> codes;
+        while (num--)
+        {
+            cin >> key;
+            // printf("num---> %d key----> %s\n", num, key.c_str());
+            // 判断是否已经存在，若存在则输出 no
+            // 否则添加false
+            if (!repeat)
+            {
+                vector<string> values = maps[key];
+                for (int j = 0; j < values.size(); j++)
+                {
+                    // cout << key << " "<< values[j] << endl;
+                    if (codes[values[j]] == 1)
+                    {
+                        repeat = true;
+                    }
+                }
+                codes[key] = 1;
+            }
+        }
+        if (!repeat)
+            cout << "Yes\n";
+        else
+            cout << "No\n";
+    }
+}
+
+void check(int m, int p)
+{
+    cout << " ";
+    if (m == p)
+        cout << "Ping";
+    else if (m < p)
+        cout << "Cong";
+    else
+        cout << "Gai";
+}
+
+void pat_1088()
+{
+    int b, c, m, x, y, a = 10;
+    cin >> m >> x >> y;
+    int tmp1, tmp2;
+    int p1, p2, p3;
+    bool suc = false;
+    while (a > 0)
+    {
+        tmp1 = (9 * y - x) * a;
+        tmp2 = (10 * x + 9 * y);
+        if (tmp1 % tmp2 == 0)
+        {
+            b = tmp1 / tmp2;
+            p1 = 10 * a + b;
+            if ((9 * (a - b) % x == 0) && (p1 <= 100))
+            {
+                c = 9 * (a - b) / x;
+                p2 = 10 * b + a;
+                p3 = p1 - p2;
+                if (p2 <= 100 && p3 < 100 && p3 > 0)
+                {
+                    suc = true;
+                    break;
+                }
+            }
+        }
+        a--;
+    }
+
+    if (!suc)
+        cout << "No Solution";
+    else
+    {
+        cout << p1;
+        check(m, p1);
+        check(m, p2);
+        check(m, p3);
+    }
+}
+
+void pat_1087()
+{
+    map<int, int> maps;
+    int n, value, tmp, sum = 0;
+    cin >> n;
+    // cout << " n" << n << endl;
+    for (tmp = 1; tmp <= n; tmp++)
+    {
+        value = tmp / 2 + tmp / 3 + tmp / 5;
+        if (maps[value] != 1)
+            sum++;
+        maps[value] = 1;
+    }
+    cout << sum << endl;
+}
+
+typedef struct school
+{
+    int num;
+    string company;
+    float score;
+} School;
+
+string transform(string key)
+{
+    // string p;
+    for (int i = 0; i < key.size(); i++)
+    {
+        if (key[i] >= 'A' && key[i] <= 'Z')
+        {
+            key[i] = (char)(key[i] ^ 0x20);
+        }
+    }
+    return key;
+}
+
+int cmp_1085(School s1, School s2)
+{
+    if (s1.score != s2.score)
+    {
+        return s1.score > s2.score;
+    }
+    else if (s1.num != s2.num)
+    {
+        return s1.num < s2.num;
+    }
+    else
+    {
+        return s1.company < s2.company;
+    }
+}
+
+void pat_1085()
+{
+    int n;
+    cin >> n;
+    map<string, School> schools;
+    char id[6], company[6];
+    int score;
+    string key;
+    while (n--)
+    {
+        scanf("%s %d %s", id, &score, company);
+        key = transform(company);
+        School sc;
+        if (!schools.count(key))
+            sc = {0, key, 0.0};
+        else
+            sc = schools.at(key);
+        sc.num++;
+        if (id[0] == 'B')
+            sc.score += score / 1.5;
+        else if (id[0] == 'A')
+            sc.score += score;
+        else
+            sc.score += score * 1.5;
+        schools[key] = sc;
+    }
+
+    vector<School> scs;
+    for (map<string, School>::iterator it = schools.begin(); it != schools.end();)
+    {
+        scs.push_back(it->second);
+        it++;
+    }
+    sort(scs.begin(), scs.end(), cmp_1085);
+    int idx = 1, prevscore = -1, offset = 0;
+    for (unsigned int i = 0; i < scs.size(); i++)
+    {
+        if (scs[i].score == prevscore)
+        {
+            offset++;
+            printf("%d %s %.0f %d", idx, scs[i].company.c_str(), scs[i].score, scs[i].num);
+        }
+        else
+        {
+            prevscore = scs[i].score;
+            printf("%d %s %.0f %d", idx + offset, scs[i].company.c_str(), scs[i].score, scs[i].num);
+            offset = 0;
+        }
+    }
+}
+
+void pat_1084()
+{
+
+    int d, n;
+    cin >> d >> n;
+    string t = to_string(d);
+    unsigned int j;
+    char tmp;
+    while (n--)
+    {
+        if (n == 0)
+            cout << t << endl;
+        unsigned int sum = 1;
+        string p;
+        tmp = t[0];
+        for (j = 1; j < t.size(); j++)
+        {
+            if (tmp == t[j])
+                sum++;
+            else
+            {
+                p += tmp + to_string(sum);
+                sum = 1;
+                tmp = t[j];
+            }
+        }
+        if (sum > 0)
+            p += tmp + to_string(sum);
+        t = p;
+    }
+}
+
+void pat_1083()
+{
+    int n, tmp, nums[10000] = {0}, j = 1;
+    cin >> n;
+    while (j <= n)
+    {
+        cin >> tmp;
+        nums[abs(tmp - j)]++;
+        j++;
+    }
+    for (j = 9999; j >= 0; j--)
+    {
+        if (nums[j] > 1)
+            printf("%d %d\n", j, nums[j]);
+    }
+}
+
+void pat_1082()
+{
+    string min_id, max_id;
+    int n, x, y, max, min = max = -1;
+    float tmp;
+    cin >> n;
+    char id[4];
+    while (n--)
+    {
+        scanf("%s %d %d", id, &x, &y);
+        tmp = sqrt(x * x + y * y);
+        if (max == min && min == -1)
+        {
+            max = min = tmp;
+            min_id = max_id = id;
+        }
+        else if (max < tmp)
+        {
+            max_id = id;
+            max = tmp;
+        }
+        else if (min > tmp)
+        {
+            min = tmp;
+            min_id = id;
+        }
+    }
+    cout << min_id << " " << max_id;
+}
+
+typedef struct student_score
+{
+    string id;
+    int gp, gm, gf, g;
+
+} StudentScore;
+
+int cmp_1080(StudentScore s1, StudentScore s2)
+{
+    if (s1.g != s2.g)
+        return s1.g > s2.g;
+    else
+        return s1.id < s2.id;
+}
+
+void pat_1080()
+{
+    char id[20];
+    int tmp;
+    int p, m, n;
+    cin >> p >> m >> n;
+    int num = p + m + n;
+    map<string, StudentScore> maps;
+    while (num)
+    {
+        scanf("%s %d", id, &tmp);
+        if (!maps.count(id))
+        {
+            StudentScore score{id, -1, -1, -1, -1};
+            maps[id] = score;
+        }
+        if (p)
+        {
+            maps[id].gp = tmp;
+            p--;
+        }
+        else if (m)
+        {
+            maps[id].gm = tmp;
+            m--;
+        }
+        else
+        {
+            maps[id].gf = tmp;
+            n--;
+        }
+
+        num--;
+    }
+
+    vector<StudentScore> scs;
+    for (map<string, StudentScore>::iterator it = maps.begin(); it != maps.end();)
+    {
+        scs.push_back(it->second);
+        it++;
+    }
+
+    for (unsigned int i = 0; i < scs.size(); i++)
+    {
+        if (scs[i].gm > scs[i].gf)
+        {
+            if (scs[i].gf == -1)
+                scs[i].g = (int)(scs[i].gm * 0.4 + 0.5);
+            else
+                scs[i].g = (int)(scs[i].gm * 0.4 + scs[i].gf * 0.6 + 0.5);
+        }
+        else
+            scs[i].g = scs[i].gf;
+    }
+    sort(scs.begin(), scs.end(), cmp_1080);
+    for (unsigned int j = 0; j < scs.size(); j++)
+        if (scs[j].gp >= 200 && scs[j].g >= 60)
+            printf("%s %d %d %d %d\n", scs[j].id.c_str(), scs[j].gp, scs[j].gm, scs[j].gf, scs[j].g);
+}
+
+bool recircle(int num)
+{
+    string p = to_string(num);
+    int i = 0, j = p.size() - 1;
+    while (i < j)
+    {
+        if (p[i]++ != p[j--])
+            return false;
+    }
+    return true;
+}
+
+string reverse_p(int n)
+{
+    string p = to_string(n);
+    int i = 0, j = p.size() - 1;
+    char tmp;
+    while (i < j)
+    {
+        tmp = p[i];
+        p[i++] = p[j];
+        p[j--] = tmp;
+    }
+    return p;
+}
+
+void pat_1079()
+{
+    int n, tmp;
+    cin >> n;
+    int count = 10;
+    bool circle;
+    string re;
+    while (!(circle = recircle(n)) && count > 0)
+    {
+        re = reverse_p(n);
+        tmp = stoi(re);
+        cout << n << " + " << re << " = " << n + tmp << endl;
+        n = tmp + n;
+        count--;
+    }
+    if (circle)
+        printf("%d is a palindromic number.", n);
+    else
+        cout << "Not found in 10 iterations.";
+}
+
+void encode(string str)
+{
+    char tmp = str[0];
+    int sum = 1;
+    for (int i = 1; i < str.size(); i++)
+    {
+        if (tmp == str[i])
+            sum++;
+        else
+        {
+            if (sum > 1)
+                cout << sum;
+            cout << tmp;
+            tmp = str[i];
+            sum = 1;
+        }
+    }
+    if (sum > 0)
+        cout << tmp;
+}
+void decode(string str)
+{
+    string n;
+    int tmp;
+    for (int j = 0; j < str.size(); j++)
+    {
+        if (str[j] >= '0' && str[j] <= '9')
+        {
+            n += str[j];
+        }
+        else
+        {
+            if (n.size() == 0)
+                cout << str[j];
+            else
+            {
+                tmp = stoi(n);
+                while (tmp--)
+                {
+                    cout << str[j];
+                }
+                n = "";
+            }
+        }
+    }
+}
+
+void pat_1078()
+{
+    char code;
+    cin >> code;
+    getchar();
+    string str;
+    getline(cin, str);
+    if (code == 'C')
+        encode(str);
+    else
+        decode(str);
+}
+
+void pat_1077()
+{
+    int n, m;
+    cin >> n >> m;
+    int scores[101] = {0}, g1, tmp, sum, max, min;
+    int column = n;
+    while (n--)
+    {
+        // 老师的评分
+        cin >> g1;
+        // 输入其它同学的评分
+        for (int i = 1; i < column; i++)
+        {
+            cin >> tmp;
+            if (tmp >= 0 && tmp <= m)
+                scores[tmp]++;
+        }
+        sum = 0;
+        min = -1;
+        max = 0;
+        // 开始处理学生的评分
+        for (int i = 0; i <= m; i++)
+        {
+            if (scores[i] > 0)
+            {
+                max = i;
+                if (min < 0)
+                    min = 0;
+                else
+                {
+                    sum += i;
+                    min++;
+                }
+                for (int j = 1; j < scores[i]; j++)
+                {
+                    sum += i;
+                    min++;
+                }
+                scores[i] = 0;
+            }
+        }
+        // 去掉一个最大值
+        sum = sum - max;
+        // 输出最终结果
+        cout << (int)((g1 + sum * 1.0 / (min - 1)) / 2.0 + 0.5) << endl;
+    }
+}
+
+
+
+typedef struct node
+{
+    int n,d;
+} Node;
+
+void pat_1075()
+{
+    int start,num, k,a,d,n,data;
+    scanf("%d %d %d",&start,&num,&k);
+    vector<int> v[3];
+    Node maps[100000];
+    while (num--)
+    {
+        scanf("%d",&a);
+        scanf("%d %d",&maps[a].d,&maps[a].n);   
+    }
+    // 恢复次序
+    while(start!=-1){
+        data = maps[start].d;
+        if(data<0) v[0].push_back(start);
+        else if(data<=k) v[1].push_back(start);
+        else v[2].push_back(start);
+        start = maps[start].n;
+    }
+    bool first = true;
+    for (int i=0;i<3;i++)
+    {
+        for(unsigned int j=0;j<v[i].size();j++){
+
+            if (first)
+                first = false;
+            else
+                printf("%05d\n",v[i][j]);
+            printf("%05d %d ",v[i][j],maps[v[i][j]].d);
+        }
+    }
+    cout << "-1" << endl;
+}
+
+void pat_1074(){
+    string code,a,b;
+    cin >> code >> a >> b;
+    string result;
+    int up=0,sum=0,p;
+    int n = code.size()-1;
+    a.insert(0,n-a.size()+1,'0');
+    b.insert(0,n-b.size()+1,'0');
+    while(n>=0){
+        sum = (a[n]-'0')+(b[n]-'0')+up;
+        p = code[n]=='0'?10:code[n]-'0';
+        up = sum/p;
+        result += (sum % p+'0');
+        n--;
+    }
+    if(up!=0) result+=(up+'0');
+    bool ok = false;
+    for(int j=result.size()-1;j>=0;j--){
+        if(result[j]>'0') ok = true;
+        if(ok) cout << result[j];
+    }
+    if(!ok) cout << "0";
+
+}
+
+int main(){
+    pat_1074();
     return 0;
 }
