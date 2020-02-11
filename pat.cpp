@@ -2484,7 +2484,231 @@ void pat_1032(){
     printf("%d %d\n",id,max);
 }
 
+void pat_1033(){
+    
+    // 键是否坏掉了
+    int errors[128] = {0};
+    string error,s2;
+    getline(cin,error);
+    getline(cin,s2);
+    for(unsigned int i= 0;i<error.size();i++){
+        // 大写字母,小写字母是坏键
+        if(error[i]<='Z' && error[i]>='A'){errors[(char)(error[i]^0x20)-'+']=1;}
+        // 其它均是坏键
+        errors[error[i]-'+']  = 1;
+    }
+    // 如果上当键坏掉，所有的大写字母均是坏键
+    if(errors[0]==1) for(int i='A'-'+';i<='Z'-'+';i++) errors[i] = 1;
+    for(unsigned int i=0;i<s2.size();i++){
+        // 键没有坏
+        if(errors[s2[i]-'+']!=1){
+             cout << s2[i];
+        }
+    }
+    cout << endl;
+}
+
+// 辗转相除法
+long long gcd(long long a,long long b){
+    return b == 0 ? a: gcd(b,a%b);
+}
+
+// 返回运算结果
+string operate_a_divide_b(long long a,long long b){
+    if(a == 0) return "0";
+    if(b == 0) return "INF";
+    bool positive = false;
+    if((a>0 && b >0)||(a<0 && b <0)) positive = true;
+    a = abs(a); b = abs(b);
+    // 找最大公约数 ，辗转相除法
+    long long c = gcd(a,b);
+    // 去掉最大公约数
+    a = a/c; b = b/c;
+    string res;
+    // 结果
+    if(a/b>0){
+        res = to_string(a/b);
+        if(a%b!=0)  res = res + " " + to_string(a%b) + "/" + to_string(b);
+        if(!positive) res = "(-" + res + ")";
+    }else res = to_string(a) + "/" + to_string(b);
+    if(!positive) res = "(-" + res +")";
+    return res;
+}
+
+void pat_1034(){
+    long long a1,b1,a2,b2;
+    scanf("%lld/%lld %lld/%lld", &a1, &b1, &a2, &b2);
+    // 运算符
+    string operation[4] =  {" + "," - "," * "," / "};
+    string s1,s2;
+    s1 = operate_a_divide_b(a1,b1) ;s2 =  operate_a_divide_b(a2,b2) + " = ";
+    // 加法
+    cout << s1 << operation[0] << s2  << operate_a_divide_b(a1*b2+a2*b1,b1*b2) << endl;
+    // 减法
+    cout << s1 << operation[1] << s2  << operate_a_divide_b(a1*b2-a2*b1,b1*b2) << endl;
+    // 乘法
+    cout << s1 << operation[2] << s2  << operate_a_divide_b(a1*a2,b1*b2) << endl;
+    // 除法
+    cout << s1 << operation[3] << s2  << operate_a_divide_b(a1*b2,b1*a2);
+}
+
+
+// // 插入排序
+// bool insert_sort(int* nums,int n,int* next){
+//     bool is = false;
+//     for(int i = 1;i<n;i++){
+//         is = collection_to_str(nums,n) == collection_to_str(next,n);
+//         int tmp;
+//         for(int j=i-1;j>=0; j--){
+//             if(nums[j+1]<nums[j]){
+//                 tmp = nums[j];nums[j] = nums[j+1];nums[j+1] = tmp;
+//             }else break;
+//         }
+//         if(is) break;
+//     }
+//     return is;
+// }
+
+// void merge(int* nums,int start,int mid,int end,int* result,int *next,int n){
+//     int i,j,k;
+//     i = start;
+//     j = mid+1;
+//     k = 0;
+//     while(i<=mid && j <= end){
+//         if(nums[i]<nums[j])
+//             result[k++] = nums[i++];
+//         else result[k++] = nums[j++];
+//     }
+//     while(i<=mid) result[k++] = nums[i++];
+//     while(j<=end) result[k++] = nums[j++];
+//     for(i=0;i<k;i++) nums[start+i] = result[i];
+// }
+
+// // merge 排序
+// void merge_sort(int *nums,int start,int end,int *result,int *next,int n){
+//     if(start < end){
+//         int mid = (start+end)/2;
+//         merge_sort(nums,start,mid,result,next,n);
+//         merge_sort(nums,mid+1,end,result,next,n);
+//         merge(nums,start,mid,end,result,next,n);
+//         // 对比一下是否相等
+//     }
+// }
+
+
+void pat_1035(){
+    int n,i,j,nums[100],next[100];
+    cin >> n;
+    for (int i = 0; i < n; i++)
+        cin >> nums[i];
+    for (int i = 0; i < n; i++)
+        cin >> next[i];
+    for(i=0;i<n-1 && next[i] <= next[i+1];i++);
+    for(j=i+1;j<n && nums[j]==next[j];j++);
+    if(j==n){
+        cout << "Insertion Sort\n";
+        sort(nums,nums+i+2);
+    }
+    else {
+        // 无需如此
+        cout << "Merge Sort\n";
+        // 找到 merge 的长度即可
+        int k = 1,is = 1;
+        while(is){
+            is = 0;
+            for(i =0 ;i<n;i++) if(nums[i]!=next[i]) is = 1;
+            k = k*2;
+            for(int i=0; i< n/k ;i++) sort(nums+i*k,nums+(i+1)*k);
+            sort(nums+n/k*k,nums+n);
+        }
+    }
+    for(i =0 ;i<n ;i++) {
+        if(i!=0) cout << " ";
+        cout << nums[i];
+    }
+}
+
+void pat_1037(){
+    int g1,s1,k1,g2,s2,k2;
+    scanf("%d.%d.%d %d.%d.%d",&g1,&s1,&k1,&g2,&s2,&k2);
+    long num1,num2,res;
+    num1 = (g1*17+ s1)*29 + k1;  
+    num2 = (g2*17+ s2)*29 + k2;
+    res = num2-num1;
+    if(res<0) cout << "-";
+    res = abs(res);
+    // 多少加隆
+    cout << res/(17*29) << ".";
+    res = res%(17*29);
+    // 多少sickle
+    cout << res/29 << ".";
+    res = res%(29);
+    // 多少 knu t
+    cout << res;
+}
+
+
+void pat_1038(){
+    int scores[101] = {0};
+    int n,score,k;
+    cin >> n;
+    while(n--){
+        scanf("%d",&score);
+        scores[score] ++;
+    }
+    cin >> k;
+    for(int i= 0;i<k;i++){
+        scanf("%d",&score);
+        cout << scores[score];
+        if(i!=k-1) cout << " ";
+    }
+    
+}
+
+void pat_1039(){
+    string s1,s2;
+    unsigned int i;
+    getline(cin,s1);
+    getline(cin,s2);
+    int givens[127] = {0};
+    for(i = 0;i<s1.size(); i++) givens[s1[i]-'0']++;
+    for(i = 0;i<s2.size(); i++) givens[s2[i]-'0']-- ;
+    
+    int left, offset = left = 0;
+    for(i =0; i < 127; i++){
+        if(givens[i]>0) left += givens[i];
+        else if(givens[i]<0) offset += givens[i];
+    }
+    if(offset<0) printf("No %d",offset*-1);
+    else printf("Yes %d",left);
+}
+
+
+void pat_1042(){
+    string s;
+    getline(cin,s);
+    int nums[26] = {0},max = 0,i ;
+    char t;
+    for(i = 0;i<s.size();i++){
+        t = s[i];
+        // 大写改小写
+        if((t<='Z'&&t>='A')) t = t^0x20;
+        if(t<='z'&&t>='a'){
+            nums[t-'a'] ++;
+            if(max<nums[t-'a']) max = nums[t-'a'];
+        }
+    }
+
+    for(i=0;i<26;i++){
+        if(nums[i]==max){
+            printf("%c %d",(char)(i+'a'),nums[i]);
+            break;
+        }
+    }
+
+}
+
 int main(){
-    pat_1032();
+    pat_1042();
     return 0;
 }
