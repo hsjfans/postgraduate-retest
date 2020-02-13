@@ -630,74 +630,34 @@ int get_pa(int a, int da)
     return p;
 }
 
-void pat_1096()
-{
-}
+
 
 bool is_prime(int i)
 {
-    bool is = true;
     int k = sqrt(i);
-    while (k > 1)
-    {
-        if (i % k == 0)
-        {
-            is = false;
-            break;
-        }
-        k--;
+    while(k > 1) {
+        if(i%k==0) return false;
+        k -- ;
     }
-    // cout << i << "\0" << is << "\n";
-    return is;
+    return true;
 }
 
-void pat_1094(void)
+void pat_1094()
 {
-    int l, k;
-    string n;
-    // scanf("%d %d\n%s", &l, &k, n);
-    cin >> l >> k >> n;
-    // cout << n << l << k;
-    int p = k;
-    bool zero = false;
-    for (int i = 0; i < l; i++)
-    {
-        if (is_prime(n[i] - '0'))
-        {
-            if (p > 1)
-            {
-                p--;
-            }
-            else
-            {
-                for (int j = i - k + 1; j <= i; j++)
-                {
-                    cout << n[j];
-                }
-                return;
-            }
-        }
-        else if (n[i] - '0' == 0)
-        {
-            if (zero)
-            {
-                p--;
-            }
-            else
-            {
-                zero = true;
-            }
-        }
-        else
-        {
-            p = k;
+    int l, k,i,zero = 0, current = 0;
+    string s;
+    cin >> l >> k >> s ;
+    bool exist = false;
+    int tmp;
+    for(i= 0; i<= l-k;i++){
+        tmp = stoi(s.substr(i,k));
+        if(is_prime(tmp)){
+            exist = true;
+            cout<< s.substr(i,k);
+            break;
         }
     }
-    // cout << p << " !!";
-    if (p != 1)
-    {
-        cout << "404";
-    }
+    if(!exist) cout << "404\n";
 }
 
 void self_control(int k)
@@ -1360,7 +1320,6 @@ void pat_1023()
     }
 }
 
-// standard file head
 typedef struct pat_student
 {
     string number;
@@ -1400,9 +1359,7 @@ parseStudent(string number, int score)
 int cmp_1(PStudent s1, PStudent s2)
 {
     if (s1.score != s2.score)
-    {
         return s1.score > s2.score;
-    }
     return s1.number < s2.number;
 }
 
@@ -1430,6 +1387,7 @@ void pat_1095()
     while (m--)
     {
         scanf("%d %s", &code, p);
+        // 输出要求
         printf("Case %d: %d %s\n", t - m, code, p);
         bool ok = true;
         if (code == 1)
@@ -1448,6 +1406,7 @@ void pat_1095()
         }
         else if (code == 2)
         {
+            // 类型 为 2 的指令，按 人数 总分 的格式输出；
             int amount, sum = amount = 0;
             int pl = stoi(p);
             for (int i = 0; i < l; i++)
@@ -1459,14 +1418,10 @@ void pat_1095()
                     amount++;
                 }
             }
-            if (!ok)
-            {
-                printf("%d %d\n", amount, sum);
-            }
+            if(!ok)  printf("%d %d\n", amount, sum);
         }
         else if (code == 3)
         {
-            ok = l == 0;
             Place places[1000];
             for (int i = 0; i < 1000; i++)
             {
@@ -1475,26 +1430,23 @@ void pat_1095()
             }
             for (int i = 0; i < l; i++)
             {
-                if (students[i].date == p)
-                {
+                if (students[i].date == p){
                     places[students[i].plaId].sum++;
+                    ok = false;
                 }
             }
-
-            sort(places, places + 1000, cmp_2);
-            for (int i = 0; i < 1000; i++)
-            {
-                if (places[i].sum > 0)
+            if(!ok) {
+                sort(places, places + 1000, cmp_2);
+                for (int i = 0; i < 1000; i++)
                 {
-                    printf("%d %d\n", places[i].plaId, places[i].sum);
+                   if (places[i].sum > 0) printf("%d %d\n", places[i].plaId, places[i].sum);
                 }
-            }
+            }  
         }
         if (ok)
             cout << "NA\n";
     }
 }
-
 void pat_1093()
 {
     string res, tmp;
@@ -1717,23 +1669,19 @@ void pat_1085()
     char id[6], company[6];
     int score;
     string key;
+    getchar();
     while (n--)
     {
         scanf("%s %d %s", id, &score, company);
         key = transform(company);
-        School sc;
-        if (!schools.count(key))
-            sc = {0, key, 0.0};
-        else
-            sc = schools.at(key);
-        sc.num++;
+        schools[key].num++;
         if (id[0] == 'B')
-            sc.score += score / 1.5;
+            schools[key].score += score / 1.5;
         else if (id[0] == 'A')
-            sc.score += score;
+            schools[key].score += score;
         else
-            sc.score += score * 1.5;
-        schools[key] = sc;
+            schools[key].score += score * 1.5;
+        
     }
 
     vector<School> scs;
@@ -2515,8 +2463,7 @@ long long gcd(long long a,long long b){
 
 // 返回运算结果
 string operate_a_divide_b(long long a,long long b){
-    if(a == 0) return "0";
-    if(b == 0) return "INF";
+    if(a==0||b==0) return b==0 ? "Inf":"0";
     bool positive = false;
     if((a>0 && b >0)||(a<0 && b <0)) positive = true;
     a = abs(a); b = abs(b);
@@ -2529,7 +2476,6 @@ string operate_a_divide_b(long long a,long long b){
     if(a/b>0){
         res = to_string(a/b);
         if(a%b!=0)  res = res + " " + to_string(a%b) + "/" + to_string(b);
-        if(!positive) res = "(-" + res + ")";
     }else res = to_string(a) + "/" + to_string(b);
     if(!positive) res = "(-" + res +")";
     return res;
@@ -2708,7 +2654,748 @@ void pat_1042(){
 
 }
 
+
+void pat_1040(){
+    int i,j=0,p,t=p=0,num = 0;
+    int pats[100000][2] = {0};
+    string s;
+    getline(cin,s);
+    for( i=0 ; i<s.size(); i++){
+        if(s[i]=='P') p++;
+        else if(s[i]=='A'){
+             pats[j][0] = p;
+             j++;
+        }
+    }
+    num = j;
+    for(i = s.size()-1;i >= 0 && j>=1 ;i--){
+        if(s[i]=='T') t++;
+        else if(s[i]=='A'){
+            pats[j-1][1] = t;
+            j--;
+        }
+    }
+    int sum = 0;
+    for( i=0;i< num;i++){
+        sum = (sum +(pats[i][0]*pats[i][1])%1000000007)%1000000007;
+    }
+    cout << sum;
+
+}
+
+void pat_1043(){
+    int maps[127] = {0},i=0;
+    string str= "PATest";
+    string s;
+    getline(cin,s);
+    for(;i<s.size();i++){
+        maps[s[i]-'A']++;
+    }
+    bool end;
+    while(true){
+        end = true;
+        for(i=0;i<6;i++){
+            if(maps[str[i]-'A']>0){
+                cout << str[i];
+                maps[str[i]-'A']--;
+                end = false;
+            }
+        }
+        if(end) break;
+    }
+   
+    cout << "ok";
+   
+}
+
+
+string low_level[13] = {"tret","jan", "feb", "mar", "apr", "may", "jun", "jly", "aug", "sep", "oct", "nov", "dec"};
+string high_level[12] = {"tam", "hel", "maa", "huh", "tou", "kes", "hei", "elo", "syy", "lok", "mer", "jou"};
+
+
+void pat_1044(){
+    int n,i,p,t1,t2;
+    cin >> n;
+    getchar();
+    map<string,int> low,high;
+    for(i=0;i<13;i++){
+        low[low_level[i]] = i;
+        high[high_level[i]] = i;
+    }
+    string s;
+    string s1,s2;
+    while(n--){
+        getline(cin,s);
+        if(s[0]<='9'&&s[0]>='0'){
+           p =  stoi(s);
+           if(p/13>0){ 
+               cout << high_level[p/13];
+              if(p%13!=0) cout << " ";
+            }
+            if(p%13!=0||p==0) cout << low_level[p%13];
+        }else{
+            t1 = t2 = 0;
+            s1 = s.substr(0,3);
+            if(high.count(s1)>0) t1 = high[s1];
+            else t2 = low[s1];
+            if(s.size()>4){
+                s2 = s.substr(4,3);
+                if(high.count(s2)>0) t1 = high[s2];
+                else t2 = low[s2];
+            }
+            cout << 13*t1 + t2;
+        }
+        cout << endl;
+    }
+}
+
+// 暴力法
+void pat_1045(){
+    int n,i,j,max =-1,min = 0x7fffffff;
+    scanf("%d",&n);
+    int nums[n],idx[n],tmp;
+    vector<int> result;
+    for(i=0;i<n;i++) {
+        scanf("%d",&nums[i]);
+        idx[i] = 0;
+    }
+    // 暴力求解
+    for(i=0;i<n;i++){
+        if(max <= nums[i])
+        {
+            idx[i] = 1;
+            max = nums[i];
+        }
+    }
+    for(i=n-1;i>=0;i--) {
+        if(min >= nums[i])
+            min = nums[i];
+        else idx[i] = 0;
+    }
+    for(i=0;i<n;i++) if(idx[i]) result.push_back(nums[i]);
+    sort(result.begin(),result.end());
+    cout << result.size() << endl;
+    if(result.size()==0) cout << endl;
+    else{
+        for(i=0;i<result.size();i++){
+        if(i!=0) cout << " ";
+        cout << result[i];}
+    }
+
+}
+
+void pat_1047(){
+    int n,max = 1,ids[1001] = {0},mid ;
+    cin >> n;
+    int g_id,m_id,score;
+    while(n--){
+        scanf("%d-%d %d",&g_id,&m_id,&score);
+        ids[g_id] += score;
+        if(max < ids[g_id]){
+             max = ids[g_id];
+             mid = g_id;
+        }
+    }
+
+    printf("%d %d\n",mid,max);
+}
+
+void pat_1048(){
+    string a,b;
+    cin >> a >> b;
+    int max,i,tmp,j;
+    char more[3] = {'J','Q','K'};
+    max = a.size()>b.size()?a.size():b.size();
+    a.insert(0,max-a.size(),'0');
+    b.insert(0,max-b.size(),'0');
+    char result[max];
+    for(i=1;i<=max;i++){
+        j = max-i;
+        if(i%2==0) // 偶数
+        {
+            tmp = b[j]-a[j];
+            if(tmp<0) tmp+=10;
+            result[j] = tmp+'0';
+        }
+        else // 奇数
+        {
+            tmp = b[j]-'0'+a[j]-'0';
+            tmp = tmp%13;
+            result[j] = tmp>=10?more[tmp-10]:tmp+'0';
+        }
+    }
+    
+    for(i=0;i<max;i++) cout << result[i];
+}
+
+
+void pat_1049(){
+   int n,i;
+   cin >> n;
+   float p,sum = 0.00;
+   for(i=1;i<=n;i++){
+       cin >> p;    
+       sum = sum + p*i*(n-i+1);
+   }
+   printf("%.2f",sum);
+}
+
+int cmp_1050(int a, int b) {return a > b;}
+
+void pat_1050(){
+    int N, m, n, t = 0;
+    scanf("%d", &N);
+    for (n = sqrt((double)N); n >= 1; n--) {
+        if (N % n == 0) {
+            m = N / n;
+            break;
+        }
+    }
+    vector<int> a(N);
+    for (int i = 0; i < N; i++)
+        scanf("%d", &a[i]);
+    sort(a.begin(), a.end(), cmp_1050);
+    vector<vector<int> > b(m, vector<int>(n));
+    int level = m / 2 + m % 2;
+    for (int i = 0; i < level; i++) {
+        for (int j = i; j <= n - 1 - i && t <= N - 1; j++)
+                b[i][j] = a[t++];
+        for (int j = i + 1; j <= m - 2 - i && t <= N - 1; j++)
+                b[j][n - 1 - i] = a[t++];
+        for (int j = n - i - 1; j >= i && t <= N - 1; j--)
+                b[m - 1 - i][j] = a[t++];
+        for (int j = m - 2 - i; j >= i + 1 && t <= N - 1; j--)
+                b[j][i] = a[t++];
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0 ; j < n; j++) {
+            printf("%d", b[i][j]);
+            if (j != n - 1) printf(" ");
+        }
+        printf("\n");
+    }
+}
+
+void pat_1052(){
+    string s; 
+    vector<vector<string> > codes;
+    int i=0,n,m = 5,first = 0,j,ms[5];
+    for(;i<3;i++) {
+       getline(cin,s);
+       vector<string> tmp;
+       for(j=0;j<s.size();j++){
+           if(s[j]=='[') first = j;
+           else if(s[j]==']') tmp.push_back(s.substr(first+1,j-first-1));
+       }
+       codes.push_back(tmp);
+    }
+    cin >> n;
+    getchar();
+    int h = codes[0].size(),e = codes[1].size(), mo = codes[2].size();
+    while(n--){
+        for(i=0;i<m;i++) scanf("%d",&ms[i]);
+        if(ms[0]>h||ms[4]>h||ms[1]>e||ms[3]>e||ms[2]>mo||ms[0]<1||ms[1]<1||ms[2]<1
+    ||ms[3]<1||ms[4]<1) 
+            cout << "Are you kidding me? @\\/@\n";
+        else 
+            cout << codes[0][ms[0]-1] << "(" << codes[1][ms[1]-1] << codes[2][ms[2]-1]
+            <<  codes[1][ms[3]-1]<< ")"<< codes[0][ms[4]-1] << endl;   
+    }
+    
+}
+
+
+void pat_1053(){
+    int N,D,K,i,sum,j,possible = 0,empty = 0;
+    double e,ek;
+    cin >> N >> e >> D;
+    for(j=0;j< N;j++){
+        // 总数
+        sum = 0;
+        cin >> K;
+        for(i=0;i<K;i++){
+            cin >> ek;
+            if(ek < e) sum++;
+        }
+        if(sum > K/2) K > D ? empty++:possible++;  
+    }
+    double po= (double)possible/N*100;
+    double em= (double)empty/N*100;
+    printf("%.1f%% %.1f%%",po,em);
+}
+
+
+bool is_number(string t){
+    int dot = 0;
+    for(int i=0;i<t.size();i++) {
+        if((t[i]>='0'&&t[i]<='9')||(t[i]=='.'&&i!=0)||(t[i]=='-'&&i==0)) {
+            if(t[i]=='.'){
+                dot++;
+                if(t.size()-i-1 > 2 || i == t.size()-1) return false;
+            }
+        }
+        else return false;
+    }
+    return dot<=1;
+}
+
+
+void pat_1054(){
+    int n,i,k = 0;
+    cin >> n;
+    string s;
+    float t,sum = 0;
+    string ok;
+    for(i=0;i<n;i++){
+        cin >> s;
+        if(is_number(s)){
+            t = stof(s);
+            if(t<-1000||t>1000) printf("ERROR: %s is not a legal number\n",s.c_str());
+            else { k++; sum += t;}
+        }
+        else { printf("ERROR: %s is not a legal number\n",s.c_str()); continue;}
+        
+    }
+
+    if(k==0) printf("The average of %d numbers is Undefined\n",k);
+    else if(k==1) printf("The average of %d number is %.2f\n",k,sum);
+    else printf("The average of %d numbers is %.2f\n",k,sum/k);
+}
+
+typedef struct sportman{
+    string name;
+    int height;
+}SportMan;
+
+int cmp_1055(SportMan a,SportMan b){
+    if(a.height != b.height)
+        return a.height > b.height;
+    else return a.name < b.name;
+}
+
+void pat_1055(){
+
+    int n,k,i,circle,p,num,m,j,sign,l=0;
+    cin >> n >> k;
+    SportMan men[n];
+    for(i=0;i<n;i++) cin >> men[i].name >> men[i].height;
+    sort(men,men+n,cmp_1055);
+    circle = n/k;
+    for(i=k-1;i>=0;i--){
+        num =(i==k-1)? n-i*circle:circle;
+        SportMan result[num];
+        p = num/2;
+        m = j = 1;
+        sign = -1;
+        result[p] = men[l++]; 
+        while(j<num){
+            result[p+m*sign] = men[l++];
+            j++;
+            sign = sign*-1;
+            if(sign<0) m++;
+        }
+        for(j=0;j<num;j++){
+            if(j!=0) cout << " ";
+            cout << result[j].name;
+        }
+        cout << endl;
+    }
+}
+
+void pat_1057(){
+    string s;
+    getline(cin,s);
+    long long sum = 0;
+    for(int i=0;i<s.size();i++){
+        if(s[i]<='z'&&s[i]>='a')
+            sum += s[i] - 'a' + 1;
+        else if(s[i]<='Z' && s[i]>='A')
+            sum += s[i] - 'A' + 1;
+    }
+    int zero = 0,one  = 0;
+    while(sum!=0){
+        sum%2==0?zero++:one++;
+        sum = sum/2;
+    } 
+    cout << zero << " " << one;
+}
+
+
+bool isPrime(int k){
+    int n = sqrt(k);
+    for(int i = n;i > 1;i--) {
+        if(k%i==0) return false;
+    }
+    return true;
+}
+
+void pat_1059(){
+    int n, rankId;
+    cin >> n;
+    bool checks[10000] = {false};
+    int ids[n];
+    int maps[10000] = {0};
+    for(int i=0;i < n;i++){
+        cin >> ids[i];
+        maps[ids[i]] = i+1;
+    }
+    string gifts[3] = {"Mystery Award\n","Minion\n","Chocolate\n"};
+    int k, checkId;
+    cin >> k;
+    for(int i=0;i<k;i++){
+        cin >> checkId;
+        printf("%04d: ",checkId);
+        if(maps[checkId] == 0) cout << "Are you kidding?\n";
+        else if(checks[checkId]) cout << "Checked\n";
+        else {
+            if(maps[checkId] == 1) cout << gifts[0];
+            else if(isPrime(maps[checkId])) cout << gifts[1];
+            else cout << gifts[2];
+            checks[checkId] = true;
+        }
+    }
+}
+
+void pat_1060(){
+    int n;
+    cin >> n;
+    int distance[n],e = 0,i;
+    for(i=0;i<n;i++) cin >> distance[i];
+    // 排个序
+    sort(distance,distance+n);
+    int t;
+    for(i=0;i< n-1;i++){
+        if(distance[i] < distance[i+1] && n - i - 1 >= distance[i]){
+             t = distance[i];
+             if(e < t) e = t;
+        }
+    }
+    cout << e;
+}
+
+
+void pat_1062(){
+    int n1,m1,n2,m2,k,t;
+    scanf("%d/%d %d/%d %d",&n1,&m1,&n2,&m2,&k);
+    if(n1*m2 > n2*m1) { swap(n1,n2);swap(m1,m2); }
+    bool first = true;
+    for(int i= 1; i< k;i ++){
+        if(n1*k >= i*m1 ) {continue;}
+        else if(i*m2>=n2*k){ break;}
+        else {
+            t = gcd(i,k);
+            if(t != 1) continue;
+            else {
+                if(first) first = false;
+                else cout << " ";
+                printf("%d/%d",i,k);
+            }
+        }
+    }
+}
+
+void pat_1063(){
+    int n;
+    cin >> n;
+    float a,b;
+    float max = 0,tmp;
+    while(n--){
+        scanf("%f %f",&a,&b);
+        tmp = sqrt(a*a+b*b);
+        if(tmp>max) max = tmp;
+    }
+    printf("%.2f",max);
+}
+
+void pat_1064(){
+    int friends[37] = {0},num = 0;
+    int n,tmp;
+    string s;
+    cin >> n;
+    while(n--){
+        cin >> tmp;
+        s = to_string(tmp);
+        tmp = 0;
+        for(int i=0;i<s.size();i++) tmp += s[i]-'0';
+        if(friends[tmp]==0) num++;
+        friends[tmp] ++;
+    }
+    cout << num << endl;
+    bool first = true;
+    for(int i=0;i<37;i++){
+        if(friends[i]>0) {
+             if(first) first = false;
+             else cout << " ";
+            cout << i;
+        }
+    }
+
+}
+
+
+void pat_1065(){
+    // 配对使用
+    int maps[100000] = {-1};
+    // 查看是否出现过
+    int pairs[100000] = {0};
+    int n,a,b;
+    cin >> n;
+    while(n--){
+        cin >> a >> b;
+        maps[a] = b;
+        maps[b] = a;
+    }
+    int k,id;
+    cin >> k;
+    int ids[k];
+    for(int i=0;i<k;i++){
+        cin >> id;
+        pairs[id] = 1;
+        ids[i] = id;
+    }
+    sort(ids,ids+k);
+    vector<int> res;
+    int num = 0,tmp;
+    bool first = true;
+    for(int i=0; i<k;i++){
+       tmp = maps[ids[i]];
+       if(tmp ==-1 || pairs[tmp] != 1 ){
+           res.push_back(ids[i]);
+       }
+    }
+    cout << res.size() << endl;
+    for(int i=0;i<res.size();i++){
+        if(first) first = false;
+        else cout << " ";
+        printf("%05d",res[i]);
+    }
+}
+
+void pat_1067(){
+    string s;
+    int max , i = 0;
+    cin >> s >> max;
+    bool succ = false;
+    getchar();
+    string pwd;
+    while(getline(cin,pwd)){
+        if(max == 0) {cout << "Account locked" << endl; break;}
+        if(pwd == "#") break;
+        if(pwd!=s) cout <<  "Wrong password: " << pwd << endl;
+        else {cout << "Welcome in" << endl; succ = true; break;}
+        max -- ;
+    }
+    
+    
+}
+
+
+void pat_1068(){
+
+    int m,n,tol,i,j;
+    cin >> m >> n >> tol;
+    int dot,dots[n][m];
+    map<int,int> maps;
+    for(i=0;i<n;i++){
+        for(j=0;j<m;j++)
+           {
+               scanf("%d",&dots[i][j]);
+               maps[dots[i][j]]++;
+           }
+    }
+    int x,y,value = -1;
+    bool has = false,suc,repeat = false;
+    for(i=1;i<n-1;i++){
+        for(j=1;j<m-1;j++){
+            suc = true;
+            dot = dots[i][j];
+            if(maps[dot]!=1) suc = false;
+            if(suc){
+                for(int k=j-1;k<=j+1;k++){
+                  if(dot - dots[i-1][k] <= tol || dot - dots[i+1][k] <= tol){
+                    suc = false;
+                    break;
+                  }
+                }
+                if(dot - dots[i][j-1] <= tol || dot - dots[i][j+1] <= tol ) suc = false;
+            }
+            if(suc && value == -1) {
+                x = i; y =j; value = dot;
+                has = true;
+            }else if(suc){repeat = true;break;}
+        }
+    }
+
+    if(repeat) cout << "Not Unique\n";
+    else if(has) printf("(%d, %d): %d\n",y+1,x+1,value);
+    else cout << "Not Exist\n";
+}
+
+
+void pat_1069(){
+    int m,n,s,i=1;
+    cin >> m >> n >> s;
+    map<string,int> maps;
+    getchar();
+    string name;
+    int j= 0;
+    bool first = true;
+    for(;i<=m;i++){
+        getline(cin,name);
+        if(i>=s){
+            // 获奖用户
+            if(j%n==0){
+                // 没得过
+                if(maps.count(name) == 0) { 
+                    maps[name] = 1;
+                    j++;
+                    if(first) first = false;
+                    cout << name << endl;
+                }
+            }else j++;
+        }
+    }
+    if(first) cout << "Keep going...";
+}
+
+void pat_1070(){
+    int n,i;
+    cin >> n;
+    int lens[n];
+    for(i=0;i<n;i++) cin >> lens[i];
+    sort(lens,lens+n);
+    int len = lens[0];
+    for(i = 1;i<n;i++){
+        len = (len + lens[i])/2;
+    }
+    cout << len;
+}
+
+
+void pat_1072(){
+    int n,m,invalids[10000] = {0},i,j,obj;
+    cin >> n >> m;
+    for(i=0;i<m;i++) {
+        cin >> obj;
+        invalids[obj] = 1;
+    }
+
+    string name;
+    int k, tmp;
+    int stu = 0, sub = 0;
+    bool ok ,first ;
+    for(i=0;i<n;i++){
+        cin >> name >> k;
+        first = true;
+        for(j=0;j<k;j++){
+            cin >> tmp;
+            ok = true;
+            if(invalids[tmp]){
+                sub ++;
+                ok = false;
+            }
+            if(!ok){
+                if(first){ first = false; cout << name << ":";}
+                printf(" %04d",tmp);
+            }
+        }
+        if(!first){ cout << endl; stu ++;}
+    }
+    printf("%d %d\n",stu,sub);
+}
+
+void pat_1018(){
+    int n,codes[127] = {-1},i;
+    cin >> n;
+    string s = "CJB";
+    for(i=0;i<s.size();i++) codes[s[i]-'A'] = i;
+    // 甲胜
+    int victory = 0, debeated = 0;
+    char a,b;
+    int nums1[127] = {0}, nums2[127] = {0},max1 = 0,max2 = 0;
+    for(i=0;i<n;i++){
+        cin >> a >> b;
+        if((codes[a-'A']+1)%3 == codes[b-'A']){
+             // 甲胜
+             victory++;
+             nums1[a-'A']++;
+             if(max1<nums1[a-'A']) max1 = nums1[a-'A'];
+        }
+        else if(a!=b){
+             // 乙胜
+             debeated ++;
+             nums2[b-'A']++;
+             if(max2<nums2[b-'A']) max2 = nums2[b-'A'];
+        }
+        // 战平
+    }
+
+    printf("%d %d %d\n%d %d %d\n",victory,n-debeated-victory,debeated,debeated,n-debeated-victory,victory);
+    if( debeated!=0 || victory !=0 ){
+        bool ok1= false,ok2 = false;
+        for(i=0;i<127;i++){
+          if(!ok1 && (nums1[i] == max1)){
+            a = i+'A';
+            ok1 = true;
+          }
+          if(!ok2 && (nums2[i] == max2))  {
+            b = i+'A';
+            ok2 = true;
+          }
+          if(ok1&&ok2) break;
+         }
+        if(victory == n) cout << a << " B";
+        else if(debeated == n) cout << "B " << b;
+        else cout << a << " " << b;
+    }else cout << "B B";
+    
+}
+
 int main(){
-    pat_1042();
+    pat_1018();
+    return 0;
+}
+
+void pat_10119(){
+     int n;
+    cin >> n;
+    int jiawin = 0, yiwin = 0;
+    int jia[3] = {0}, yi[3] = {0};
+    for (int i = 0; i < n; i++) {
+        char s, t;
+        cin >> s >> t;
+        if (s == 'B' && t == 'C') {
+            jiawin++;
+            jia[0]++;
+        } else if (s == 'B' && t == 'J') {
+            yiwin++;
+            yi[2]++;
+        } else if (s == 'C' && t == 'B') {
+            yiwin++;
+            yi[0]++;
+        } else if (s == 'C' && t == 'J') {
+            jiawin++;
+            jia[1]++;
+        } else if (s == 'J' && t == 'B') {
+            jiawin++;
+            jia[2]++;
+        } else if (s == 'J' && t == 'C') {
+            yiwin++;
+            yi[1]++;
+        }
+    }
+    cout << jiawin << " " << n - jiawin - yiwin << " " << yiwin << endl << yiwin << " " << n - jiawin - yiwin << " " << jiawin << endl;
+    int maxjia = jia[0] >= jia[1] ? 0 : 1;
+    maxjia = jia[maxjia] >= jia[2] ? maxjia : 2;
+    int maxyi = yi[0] >= yi[1] ? 0 : 1;
+    maxyi = yi[maxyi] >= yi[2] ? maxyi : 2;
+    char str[4] = {"BCJ"};
+    cout << str[maxjia] << " " << str[maxyi];
+}
+
+int main(){
+    pat_1018();
+    cout << " next --> \n";
+    pat_10119();
     return 0;
 }
