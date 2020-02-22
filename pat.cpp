@@ -1557,57 +1557,7 @@ void pat_1090()
     }
 }
 
-void check(int m, int p)
-{
-    cout << " ";
-    if (m == p)
-        cout << "Ping";
-    else if (m < p)
-        cout << "Cong";
-    else
-        cout << "Gai";
-}
 
-void pat_1088()
-{
-    int b, c, m, x, y, a = 10;
-    cin >> m >> x >> y;
-    int tmp1, tmp2;
-    int p1, p2, p3;
-    bool suc = false;
-    while (a > 0)
-    {
-        tmp1 = (9 * y - x) * a;
-        tmp2 = (10 * x + 9 * y);
-        if (tmp1 % tmp2 == 0)
-        {
-            b = tmp1 / tmp2;
-            p1 = 10 * a + b;
-            if ((9 * (a - b) % x == 0) && (p1 <= 100))
-            {
-                c = 9 * (a - b) / x;
-                p2 = 10 * b + a;
-                p3 = p1 - p2;
-                if (p2 <= 100 && p3 < 100 && p3 > 0)
-                {
-                    suc = true;
-                    break;
-                }
-            }
-        }
-        a--;
-    }
-
-    if (!suc)
-        cout << "No Solution";
-    else
-    {
-        cout << p1;
-        check(m, p1);
-        check(m, p2);
-        check(m, p3);
-    }
-}
 
 void pat_1087()
 {
@@ -1625,88 +1575,6 @@ void pat_1087()
     cout << sum << endl;
 }
 
-typedef struct school
-{
-    int num;
-    string company;
-    float score;
-} School;
-
-string transform(string key)
-{
-    // string p;
-    for (int i = 0; i < key.size(); i++)
-    {
-        if (key[i] >= 'A' && key[i] <= 'Z')
-        {
-            key[i] = (char)(key[i] ^ 0x20);
-        }
-    }
-    return key;
-}
-
-int cmp_1085(School s1, School s2)
-{
-    if (s1.score != s2.score)
-    {
-        return s1.score > s2.score;
-    }
-    else if (s1.num != s2.num)
-    {
-        return s1.num < s2.num;
-    }
-    else
-    {
-        return s1.company < s2.company;
-    }
-}
-
-void pat_1085()
-{
-    int n;
-    cin >> n;
-    map<string, School> schools;
-    char id[6], company[6];
-    int score;
-    string key;
-    getchar();
-    while (n--)
-    {
-        scanf("%s %d %s", id, &score, company);
-        key = transform(company);
-        schools[key].num++;
-        if (id[0] == 'B')
-            schools[key].score += score / 1.5;
-        else if (id[0] == 'A')
-            schools[key].score += score;
-        else
-            schools[key].score += score * 1.5;
-        
-    }
-
-    vector<School> scs;
-    for (map<string, School>::iterator it = schools.begin(); it != schools.end();)
-    {
-        scs.push_back(it->second);
-        it++;
-    }
-    sort(scs.begin(), scs.end(), cmp_1085);
-    int idx = 1, prevscore = -1, offset = 0;
-    for (unsigned int i = 0; i < scs.size(); i++)
-    {
-        if (scs[i].score == prevscore)
-        {
-            offset++;
-            printf("%d %s %.0f %d", idx, scs[i].company.c_str(), scs[i].score, scs[i].num);
-        }
-        else
-        {
-            prevscore = scs[i].score;
-            printf("%d %s %.0f %d", idx + offset, scs[i].company.c_str(), scs[i].score, scs[i].num);
-            offset = 0;
-        }
-    }
-}
 
 void pat_1084()
 {
@@ -1862,111 +1730,46 @@ void pat_1080()
             printf("%s %d %d %d %d\n", scs[j].id.c_str(), scs[j].gp, scs[j].gm, scs[j].gf, scs[j].g);
 }
 
-bool recircle(int num)
-{
-    string p = to_string(num);
-    int i = 0, j = p.size() - 1;
-    while (i < j)
-    {
-        if (p[i]++ != p[j--])
-            return false;
-    }
-    return true;
-}
 
-string reverse_p(int n)
-{
-    string p = to_string(n);
-    int i = 0, j = p.size() - 1;
-    char tmp;
-    while (i < j)
-    {
-        tmp = p[i];
-        p[i++] = p[j];
-        p[j--] = tmp;
-    }
-    return p;
-}
-
-void pat_1079()
-{
-    int n, tmp;
-    cin >> n;
-    int count = 10;
-    bool circle;
-    string re;
-    while (!(circle = recircle(n)) && count > 0)
-    {
-        re = reverse_p(n);
-        tmp = stoi(re);
-        cout << n << " + " << re << " = " << n + tmp << endl;
-        n = tmp + n;
-        count--;
-    }
-    if (circle)
-        printf("%d is a palindromic number.", n);
-    else
-        cout << "Not found in 10 iterations.";
-}
-
-void encode(string str)
-{
+void encode(string str){
     char tmp = str[0];
     int sum = 1;
-    for (int i = 1; i < str.size(); i++)
-    {
-        if (tmp == str[i])
-            sum++;
-        else
-        {
-            if (sum > 1)
-                cout << sum;
-            cout << tmp;
+    for(int i=1;i<str.size();i++){
+        if(tmp==str[i]) sum++;
+        else{
+            if(sum >=2 ) cout << sum;
+            cout<<tmp;
             tmp = str[i];
             sum = 1;
         }
     }
-    if (sum > 0)
-        cout << tmp;
+    if(sum >=2) cout << sum; 
+    cout << tmp;
 }
-void decode(string str)
-{
+void decode(string str){
     string n;
-    int tmp;
-    for (int j = 0; j < str.size(); j++)
-    {
-        if (str[j] >= '0' && str[j] <= '9')
-        {
+    int tmp = 1;
+    for(int j=0;j<str.size();j++){
+        if(str[j]>='0'&&str[j]<='9'){
             n += str[j];
-        }
-        else
-        {
-            if (n.size() == 0)
-                cout << str[j];
-            else
-            {
-                tmp = stoi(n);
-                while (tmp--)
-                {
-                    cout << str[j];
-                }
-                n = "";
-            }
+        }else{
+            if(n.size() > 0) tmp = stoi(n);
+            while(tmp--) cout << str[j];
+            tmp = 1; 
+            n="";
         }
     }
 }
 
-void pat_1078()
-{
+void pat_1078(){
     char code;
     cin >> code;
     getchar();
     string str;
-    getline(cin, str);
-    if (code == 'C')
-        encode(str);
-    else
-        decode(str);
+    getline(cin,str);
+    if(code=='C') 
+       encode(str);
+    else if(code=='D') decode(str);
 }
 
 void pat_1077()
@@ -2090,127 +1893,6 @@ void pat_1074()
     }
     if (!ok)
         cout << "0";
-}
-
-typedef struct question
-{
-    int score, num, rights; // 编号 分数 选项数量
-    int options[5];         // 是否为正确选项
-} Question;
-
-typedef struct error
-{
-    int id, idx, count;
-} Error;
-
-int cmp_1073(Error e1, Error e2)
-{
-    if (e1.count != e2.count)
-    {
-        return e1.count > e2.count;
-    }
-    else if (e1.id != e2.id)
-    {
-        return e1.id < e2.id;
-    }
-    else
-        return e1.idx < e2.idx;
-}
-
-void pat_1073()
-{
-    int n, m; // 学生 多选题个数
-    scanf("%d %d",&n,&m);
-    bool hasErr = false;
-    Question questions[m];
-    map<string, Error> errors;
-    vector<Error> sortErrors;
-    // 每行顺次给出一道题的满分值（不超过 5 的正整数）、选项个数（不少于 2 且不超过 5 的正整数）、正确选项个数（不超过选项个数的正整数）、所有正确选项。
-    char option;
-    for (int i = 0; i < m; i++)
-    {
-        scanf("%d %d %d", &questions[i].score, &questions[i].num, &questions[i].rights);
-        for (int j = 0; j < questions[i].rights; j++)
-        {
-            cin >> option;
-            questions[i].options[option - 'a'] = 1;
-        }
-    }
-    string str, key;
-    // 学生选项
-    for (int i = 0; i < n; i++)
-    {
-        // 处理每一个学生
-        getline(cin, str);
-        // 题目id
-        int idx = 0, j = 0, count = 0, rights;
-        float scores = 0; // 学生的得分综合
-        while (j < str.size())
-        {
-            // 在 0和9 之间
-            // 每一道题
-            if (str[j] <= '9' && str[j] >= '0')
-            {
-                rights = questions[idx].rights;
-                count = str[j] - '0';
-                while (count > 0)
-                {
-                    j++;
-                    if (str[j] != ' ')
-                    {
-                        // 如果选择正确
-                        if (questions[idx].options[str[j] - 'a'])
-                        {
-                            rights--;
-                            count--;
-                        }
-                        // 选项错误
-                        else
-                        {
-                            hasErr = true;
-                            rights = -1;
-                            key = to_string(idx) + "-" + str[j];
-                            if (!errors.count(key))
-                            {
-                                Error error = {idx + 1, str[j] - 'a' + 1, 1};
-                                errors[key] = error;
-                            }
-                            else
-                                errors[key].count++;
-                        }
-                    }
-                }
-                //
-                if (rights == 0)
-                {
-                    scores += questions[idx].score;
-                }
-                else if (rights > 0)
-                    scores += questions[idx].score * 0.5;
-                idx++;
-            }
-            else
-                j++;
-        }
-        printf("%0.1f\n", scores);
-    }
-
-    if (hasErr)
-    {
-        for (map<string, Error>::iterator it = errors.begin(); it != errors.end();)
-        {
-            sortErrors.push_back(it->second);
-            it++;
-        }
-        sort(sortErrors.begin(), sortErrors.end(), cmp_1073);
-        int max = sortErrors[0].count;
-        for (int i = 0; i < sortErrors.size(); i++){
-            if(sortErrors[i].count == max){
-                 printf("%d %d-%c\n", sortErrors[i].count, (sortErrors[i].id + 1), sortErrors[i].idx + 'a');
-            }else break;
-        }
-           
-    }else cout << "Too simple";
 }
 
 typedef struct p_node{
@@ -3190,48 +2872,6 @@ void pat_1067(){
 }
 
 
-void pat_1068(){
-
-    int m,n,tol,i,j;
-    cin >> m >> n >> tol;
-    int dot,dots[n][m];
-    map<int,int> maps;
-    for(i=0;i<n;i++){
-        for(j=0;j<m;j++)
-           {
-               scanf("%d",&dots[i][j]);
-               maps[dots[i][j]]++;
-           }
-    }
-    int x,y,value = -1;
-    bool has = false,suc,repeat = false;
-    for(i=1;i<n-1;i++){
-        for(j=1;j<m-1;j++){
-            suc = true;
-            dot = dots[i][j];
-            if(maps[dot]!=1) suc = false;
-            if(suc){
-                for(int k=j-1;k<=j+1;k++){
-                  if(dot - dots[i-1][k] <= tol || dot - dots[i+1][k] <= tol){
-                    suc = false;
-                    break;
-                  }
-                }
-                if(dot - dots[i][j-1] <= tol || dot - dots[i][j+1] <= tol ) suc = false;
-            }
-            if(suc && value == -1) {
-                x = i; y =j; value = dot;
-                has = true;
-            }else if(suc){repeat = true;break;}
-        }
-    }
-
-    if(repeat) cout << "Not Unique\n";
-    else if(has) printf("(%d, %d): %d\n",y+1,x+1,value);
-    else cout << "Not Exist\n";
-}
-
-
 void pat_1069(){
     int m,n,s,i=1;
     cin >> m >> n >> s;
@@ -3351,51 +2991,362 @@ void pat_1018(){
     
 }
 
-int main(){
-    pat_1018();
-    return 0;
-}
 
-void pat_10119(){
-     int n;
-    cin >> n;
-    int jiawin = 0, yiwin = 0;
-    int jia[3] = {0}, yi[3] = {0};
-    for (int i = 0; i < n; i++) {
-        char s, t;
-        cin >> s >> t;
-        if (s == 'B' && t == 'C') {
-            jiawin++;
-            jia[0]++;
-        } else if (s == 'B' && t == 'J') {
-            yiwin++;
-            yi[2]++;
-        } else if (s == 'C' && t == 'B') {
-            yiwin++;
-            yi[0]++;
-        } else if (s == 'C' && t == 'J') {
-            jiawin++;
-            jia[1]++;
-        } else if (s == 'J' && t == 'B') {
-            jiawin++;
-            jia[2]++;
-        } else if (s == 'J' && t == 'C') {
-            yiwin++;
-            yi[1]++;
+typedef struct question{
+    int score, rightOptions,options;
+    int rights[5];
+}Question;
+
+
+
+void pat_1058(){
+    int n,m,i,j,k,start,l,num = 0,t;
+    cin >> n >> m;
+    Question questions[m];
+    int score,options,rightOptions,max_error = 0,errors[101]={0};
+    char tmp;
+    // m 个
+    for(i=0;i<m;i++){
+        scanf("%d %d %d",&questions[i].score,&questions[i].options,&questions[i].rightOptions);
+        for(j=0;j<5;j++) questions[i].rights[j] = 0;
+        for(j=0;j<questions[i].rightOptions;j++){
+            cin >> tmp;
+            questions[i].rights[tmp-'a'] = 1;
         }
     }
-    cout << jiawin << " " << n - jiawin - yiwin << " " << yiwin << endl << yiwin << " " << n - jiawin - yiwin << " " << jiawin << endl;
-    int maxjia = jia[0] >= jia[1] ? 0 : 1;
-    maxjia = jia[maxjia] >= jia[2] ? maxjia : 2;
-    int maxyi = yi[0] >= yi[1] ? 0 : 1;
-    maxyi = yi[maxyi] >= yi[2] ? maxyi : 2;
-    char str[4] = {"BCJ"};
-    cout << str[maxjia] << " " << str[maxyi];
+    getchar();
+    string answer;
+    bool right,allright = true;
+    // n 个
+    for(i=0;i<n;i++){
+        getline(cin,answer);
+        score = 0,options = 0;
+        k = 0,start = 0;
+        for(j= start;j<answer.size();j++){
+           if(answer[j] == ')'){
+               options = answer[start+1] - '0';
+               right = options ==questions[k].rightOptions;
+               l = 0;
+               if(right){
+                   // 可能正确
+                   for(t=start+3;t<j;t+=2){
+                       if(questions[k].rights[answer[t]-'a']!=1){
+                           right = false; break;
+                       }
+                   }
+               }
+               if(!right){
+                   // 错误
+                   allright = false;
+                   errors[k]++;
+                   if(max_error < errors[k]) max_error = errors[k];  
+                 
+               }else{
+                   score += questions[k].score;
+               }
+               k++;
+               // 下一个 '('
+               start = j+2 ;
+           }
+        }
+        cout << score << endl;
+    }
+    if(allright) cout << "Too simple";
+    else{
+        right = true;
+        cout << max_error << " ";
+        for(i=0;i<m;i++){
+            if(errors[i]==max_error) {
+                if(right) right = false;
+                else cout << " ";
+                cout << i+1;
+            }
+        }
+    }
+   
+}
+
+
+void pat_1073()
+{
+    int n,m,i,j,k,start,l,num = 0,t;
+    cin >> n >> m;
+    Question questions[m];
+    int score,options,rightOptions,max_error = 0;
+    char tmp;
+    // m 个
+    for(i=0;i<m;i++){
+        scanf("%d %d %d",&questions[i].score,&questions[i].options,&questions[i].rightOptions);
+        for(j=0;j<5;j++) questions[i].rights[j] = 0;
+        for(j=0;j<questions[i].rightOptions;j++){
+            cin >> tmp;
+            questions[i].rights[tmp-'a'] = n;
+        }
+    }
+    getchar();
+    string answer;
+    bool right,allright = true;
+    float score_sum;
+    int errors[101][5] = {0};
+    // n 个
+    for(i=0;i<n;i++){
+        getline(cin,answer);
+        score_sum = 0,options = 0;
+        k = 0,start = 0;
+        for(j= start;j<answer.size();j++){
+           if(answer[j] == ')'){
+               options = answer[start+1] - '0';
+               right = options <= questions[k].rightOptions;
+               l = 0; t= start+3;
+               for(;t<j;t+=2){
+                   l = answer[t]-'a';
+                   if(questions[k].rights[l]==0){
+                        right = false;
+                        errors[k][l]++;
+                        if(max_error < errors[k][l]) max_error = errors[k][l];
+                   }else questions[k].rights[l]--;
+               }
+               for(l=0;l<5;l++){
+                   if(questions[k].rights[l] > 0 && questions[k].rights[l]!= n-i-1){
+                      errors[k][l]++;
+                      if(max_error < errors[k][l]) max_error = errors[k][l];
+                      questions[k].rights[l] = n-i-1;
+                   }
+               }  
+               if(right){
+                   if(options<questions[k].rightOptions) score_sum += questions[k].score/2.0;
+                   else score_sum += questions[k].score;
+               }else allright = false;
+               k++;
+               // 下一个 '('
+               start = j+2 ;
+           }
+        }
+        printf("%.1f\n",score_sum);
+    }
+    if(allright) cout << "Too simple";
+    else{
+        for(i=0;i<m;i++){
+            for(j=0;j<5;j++){
+                if(errors[i][j] == max_error) printf("%d %d-%c\n",max_error,i+1,j+'a');  
+            }
+        }
+    }
+}
+
+
+void pat_1068(){
+    int picture[1005][1005] = {0}, sub1, sub2, num;
+    map<int, int> match;
+	int M, N, tol, cnt = 0, f = 0;
+	cin >> M >> N >> tol;
+	for(int i = 1; i < N+1; i++){
+		for(int j = 1; j < M+1; j++){
+			cin >> picture[i][j];
+			match[picture[i][j]]++;
+		}
+			
+	}
+	for(int i = 1; i <= N; i++){
+		for(int j = 1; j <= M; j++){
+			int flag = 0;
+			if(match[picture[i][j]] != 1)
+				continue;
+			for(int k = i-1; k <= i+1; k++){
+				for(int l = j-1; l <= j+1; l++){
+					if(k == i && l == j)
+						continue;
+					if((abs(picture[i][j] - picture[k][l]) <= tol)){
+						flag = 1;
+						break;
+					}
+				}
+				if(flag)	break;
+			}
+			if(!flag){
+				sub1 = i;
+				sub2 = j;
+				num = picture[i][j];
+				cnt++;
+			}
+		}
+	}
+	if(!cnt)	cout << "Not Exist";
+	else if(cnt > 1)	cout << "Not Unique";
+	else	cout << "(" << sub2 << ", " << sub1 << "): " << num; 
+}
+
+
+
+
+string add(string s1,string s2){
+    int l = s1.size(),i=0,next = 0,num;
+    string res ="";
+    for(i=l-1;i>=0;i--){
+        num = s1[i]-'0'+s2[i]-'0'+next;
+        next = num/10;
+        res = to_string(num%10) + res;
+    }
+    if(next>0) res =  to_string(next) + res;
+    return res;
+}
+
+void pat_1079(){
+    string s,re;
+    cin >> s;
+    int count =10;
+    bool circle;
+    while(count>0){
+        re = s;
+        reverse(re.begin(),re.end());
+        if(re!=s){
+            cout << s << " + " << re << " = ";
+            s = add(re,s);
+            cout << s << endl;
+        }else {
+            cout << re << " is a palindromic number.\n";
+            return;
+        }
+        count--;
+    }
+   cout << "Not found in 10 iterations.\n";
+}
+
+
+typedef struct school
+{
+    int num;
+    string company;
+    int score;
+} School;
+
+string transform(string key)
+{
+    // string p;
+    for (int i = 0; i < key.size(); i++)
+    {
+        if (key[i] >= 'A' && key[i] <= 'Z')
+        {
+            key[i] = (char)(key[i] ^ 0x20);
+        }
+    }
+    return key;
+}
+
+int cmp_1085(School s1, School s2)
+{
+    if (s1.score != s2.score)
+    {
+        return s1.score > s2.score;
+    }
+    else if (s1.num != s2.num)
+    {
+        return s1.num < s2.num;
+    }
+    else
+    {
+        return s1.company < s2.company;
+    }
+}
+
+void pat_1085()
+{
+    int n;
+    scanf("%d",&n);
+    unordered_map<string, double> scores;
+    unordered_map<string, int> nums;
+    string key;
+    getchar();
+    while (n--)
+    {
+        char id[6], company[6];
+        double score;
+        scanf("%s %lf %s", id, &score, company);
+        key = transform(company);
+        ++nums[key];
+        if (id[0] == 'B')
+            scores[key]+= score / 1.5;
+        else if (id[0] == 'A')
+            scores[key] += score;
+        else
+            scores[key] += score * 1.5;
+    }
+        
+    vector<School> scs;
+    for (auto it = scores.begin(); it != scores.end();)
+    {
+        School sc = {nums[it->first],it->first,int(it->second)};
+        scs.push_back(sc);
+        it++;
+    }
+    sort(scs.begin(), scs.end(), cmp_1085);
+    cout << scs.size() << endl;
+    int idx = 1, id = 0;
+    int  prevscore = -1;
+    for (unsigned int i = 0; i < scs.size(); i++)
+    {
+        id ++;
+        idx = (prevscore == scs[i].score ) ? idx : id;
+        prevscore = scs[i].score;
+        printf("%d %s %d %d\n", idx, scs[i].company.c_str(), scs[i].score, scs[i].num);
+    
+    }
+}
+
+
+void check(int m, double p)
+{
+    cout << " ";
+    if (m == p)
+        cout << "Ping";
+    else if (m < p)
+        cout << "Cong";
+    else
+        cout << "Gai";
+}
+
+void pat_1088()
+{
+    int m,x,y;
+    cin >> m >> x >> y;
+    int a,b; 
+    double c;
+    for(a=99;a>=10;a--){
+        b = a%10*10 + a / 10;
+        c = abs(a-b)*1.0/x;
+        if(b==c*y){ 
+            cout << a;
+            check(m, a);
+            check(m, b);
+            check(m, c);
+            return;
+        }
+    }
+    cout << "No Solution";
+    
+}
+
+void pat_1089(){
+    int n;
+    cin >> n;
+    vector<int> v(n+1);
+    for (int i = 1; i <= n; i++) cin >> v[i];
+    for (int i = 1; i <= n; i++) {
+        for (int j = i + 1; j <= n; j++) {
+            vector<int> lie, a(n + 1, 1);
+            a[i] = a[j] = -1;
+            for (int k = 1; k <= n; k++)
+                if (v[k] * a[abs(v[k])] < 0) lie.push_back(k);
+            if (lie.size() == 2 && a[lie[0]] + a[lie[1]] == 0) {
+                cout << i << " " << j;
+                return ;
+            }
+        }
+    }
+    cout << "No Solution";
 }
 
 int main(){
-    pat_1018();
-    cout << " next --> \n";
-    pat_10119();
+    pat_1089();
     return 0;
 }
