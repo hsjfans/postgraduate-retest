@@ -22,6 +22,8 @@
 #include <cstdio>
 #include <complex>
 #include <unordered_map>
-#include<queue>
+#include <queue>
+#include <array>
+#include <set>
 
 #endif

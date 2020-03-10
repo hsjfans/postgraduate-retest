@@ -1087,8 +1087,470 @@ void pat_1143()
     }
 }
 
+void pat_1068()
+{
+    int n, m;
+    cin >> n >> m;
+    int i, nums[n], sum = 0;
+    for (i = 0; i < n; i++)
+        cin >> nums[i];
+    // 排序
+    sort(nums, nums + n);
+
+    // 贪心算法
+}
+
+bool is_prime(int n)
+{
+    if (n <= 1)
+        return false;
+    int k = sqrt(n);
+    for (int i = 3; i <= k; i++)
+    {
+        if (n % i == 0)
+            return false;
+    }
+    return true;
+}
+
+int real_int(int n, int d)
+{
+    string real;
+    int k;
+    while (n != 0)
+    {
+        k = n % d;
+        real += to_string(k);
+        n = n / d;
+    }
+    int sum = real.size() > 0 ? real[0] - '0' : 0;
+    for (int i = 1; i < real.size(); i++)
+    {
+        sum = sum * d + (real[i] - '0');
+    }
+    return sum;
+}
+
+void pat_1015()
+{
+    int n, d, real, rev;
+    cin >> n;
+    while (n > 0)
+    {
+        cin >> d;
+        real = n;
+        rev = real_int(n, d);
+        if (is_prime(real) && is_prime(rev))
+            cout << "Yes" << endl;
+        else
+            cout << "No" << endl;
+        cin >> n;
+    }
+}
+
+bool isPalindromic(string str)
+{
+    int i = 0, j = str.size() - 1;
+    while (i < j)
+    {
+        if (str[i++] != str[j--])
+            return false;
+    }
+    return true;
+}
+
+string getBaseNumber(int n, int b)
+{
+    if (n < b)
+        return to_string(n);
+    string res;
+    int k;
+    while (n > 0)
+    {
+        k = n % b;
+        res = res + to_string(k);
+        n = n / b;
+    }
+    return res;
+}
+
+void pat_1019()
+{
+    int n, b;
+    cin >> n >> b;
+    string res = getBaseNumber(n, b);
+    if (isPalindromic(res))
+        cout << "Yes" << endl;
+    else
+        cout << "No" << endl;
+    for (int i = res.size() - 1; i >= 0; i--)
+    {
+        cout << res[i];
+        if (i != 0)
+            cout << " ";
+    }
+}
+
+typedef struct customer
+{
+    int h, m, s, t;
+    int seconds;
+} Customer;
+
+int Seconds(Customer c)
+{
+    return (c.h * 60 + c.m) * 60 + c.s;
+}
+
+int cmp_1017(Customer c1, Customer c2)
+{
+    return c1.seconds < c2.seconds;
+}
+
+void pat_1017()
+{
+    int n, k, wait = 0, num = 0;
+    cin >> n >> k;
+    Customer cus[n];
+    int wins[k];
+    int start = 8 * 60 * 60, end = 17 * 60 * 60;
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%d:%d:%d %d", &cus[i].h, &cus[i].m, &cus[i].s, &cus[i].t);
+        cus[i].seconds = Seconds(cus[i]);
+    }
+    for (int i = 0; i < k; i++)
+        wins[i] = start;
+    sort(cus, cus + n, cmp_1017);
+    int i = 0, j = 0;
+    while (i != n - 1)
+    {
+        j = 0;
+        while (j < k)
+        {
+            if (cus[i].seconds > end)
+            {
+                break;
+            }
+            else
+            {
+                if (cus[i].seconds < wins[j])
+                {
+                    wait += wins[j] - cus[i].seconds;
+                    cus[i].seconds = wins[j];
+                }
+                wins[j] = cus[i].seconds + cus[i].t * 60;
+                j++;
+                num++;
+                i++;
+            }
+        }
+        sort(wins, wins + k);
+    }
+    printf("%.1f", wait / 60.0 / num);
+}
+
+void pat_1018()
+{
+    int cmax, n, sp, m;
+    cin >> cmax >> n >> sp >> m;
+    int i, j, c[n + 1];
+    for (i = 1; i <= n; i++)
+        cin >> c[i];
+    int maps[n + 1][n + 1], x, y, t;
+    for (i = 0; i < m; i++)
+    {
+        cin >> x >> y >> t;
+        maps[x][y] = t;
+        maps[y][x] = t;
+    }
+    // dijkstra 最短路径问题
+    // 权重,初始化为无穷大 == 101
+    // 初始化集合
+    int weights[n + 1], sets[n + 1], max = 100, cur = 0;
+    // 路径
+    int paths[n + 1], sends[n + 1];
+    for (i = 0; i <= n; i++)
+    {
+        weights[i] = 101;
+        sets[i] = 1;
+        paths[i] = 0;
+    }
+    // 先从0开始
+    weights[0] = 0;
+    sets[0] = 0;
+    sends[0] = 0;
+    j = n;
+    // 一些必要的值
+    int weight, min, min_id, send;
+    while (j > 0)
+    {
+        min = 101;
+        for (i = 1; i <= n; i++)
+        {
+            // 有边并且为访问过的节点
+            if (maps[cur][i] <= max && maps[cur][i] != 0 && sets[i] == 1)
+            {
+                // 当前路径的权重和发送数量
+                weight = maps[cur][i] + weights[cur];
+                send = sends[cur] + cmax / 2 - c[i];
+                // 记录路径
+                if (weight < weights[i])
+                {
+                    weights[i] = weight;
+                    paths[i] = cur;
+                    sends[i] = send;
+                }
+                // 更新问题，这是关键所在，找到 take back 最小的数量
+                else if (weights[i] == weight)
+                {
+                    // 这里·缺了一步，没太看懂题目啥意思
+                    if (sends[i] > send)
+                    {
+                        sends[i] = send;
+                        paths[i] = cur;
+                    }
+                }
+            }
+            // 找到当前最短路径
+            if (sets[i] == 1)
+            {
+                if (min > weights[i])
+                {
+                    min_id = i;
+                    min = weights[i];
+                }
+            }
+        }
+        // 找到当前最小的
+        sets[min_id] = 0;
+        cur = min_id;
+        // 如果目标已经找到退出即可
+        if (cur == sp)
+            break;
+        j--;
+    }
+
+    send = 0;
+    int collect = 0;
+    if (sends[sp] < 0)
+    {
+        collect = -1 * sends[sp];
+    }
+    else
+        send = sends[sp];
+
+    cout << send << " ";
+    // 打印路径
+    int idx = sp;
+    string res = to_string(sp);
+    while (idx != 0)
+    {
+        res = to_string(paths[idx]) + "->" + res;
+        idx = paths[idx];
+    }
+    cout << res << " " << collect;
+}
+
+// 采用移位运算
+int divide(int dividend, int divisor)
+{
+
+    bool negative = (dividend < 0) ^ (divisor < 0) ? false : true;
+    // 考虑溢出情况,这里采用 long 型
+    long a = labs(dividend), b = labs(divisor), tmp;
+    // 最大是 31，最小是0
+    int left = 1, right = 31;
+    int res = 0;
+    while (left < right)
+    {
+        tmp = b << left;
+        if (tmp > a)
+        {
+            res = left;
+            break;
+        }
+        left++;
+    }
+    return res * (negative ? -1 : 1);
+}
+
+struct Point
+{
+    int left, right, target;
+};
+
+void pat_1020()
+{
+
+    int n, i;
+    cin >> n;
+    int postorders[n + 1], inorders[n + 1];
+    // 记录中序的节点索引值，便于查询位置
+    // 典型的空间换时间的算法
+    map<int, int> ms;
+    for (i = 1; i <= n; i++)
+        cin >> postorders[i];
+    for (i = 1; i <= n; i++)
+    {
+        cin >> inorders[i];
+        ms[inorders[i]] = i;
+    }
+
+    // 采用一个队列保存路径
+    int size, mid, left, right, target;
+    // 一个三元组队列 {left,right,target}
+    queue<Point> q;
+    q.push(Point{1, n, n});
+    cout << postorders[n];
+    // 开始模拟层序遍历过程
+    while (!q.empty())
+    {
+        size = q.size();
+        for (i = 0; i < size; i++)
+        {
+            Point dot = q.front();
+            q.pop();
+            left = dot.left, right = dot.right, target = dot.target;
+            // 放入时打印
+            // 找到目标节点的位置
+            mid = ms[postorders[target]];
+            // 还存在左节点，打印，并放入
+            if (left < mid)
+            {
+                cout << " " << postorders[target - (right - mid + 1)];
+                q.push(Point{left, mid - 1, target - (right - mid + 1)});
+            }
+            // 还存在右节点，打印，并放入
+            if (right > mid)
+            {
+                cout << " " << postorders[target - 1];
+                q.push(Point{mid + 1, right, target - 1});
+            }
+        }
+    }
+}
+
+void dfs_1021(vector<int> *graph, int *visited, int node, int height, int &maxheight, vector<int> &res)
+{
+    visited[node] = 1;
+    if (height > maxheight)
+    {
+        maxheight = height;
+        res.clear();
+        res.push_back(node);
+    }
+    else if (height == maxheight)
+    {
+        res.push_back(node);
+    }
+    for (int i = 0; i < graph[node].size(); i++)
+    {
+        if (!visited[graph[node][i]])
+        {
+            dfs_1021(graph, visited, graph[node][i], height + 1, maxheight, res);
+        }
+    }
+}
+
+void pat_1021()
+{
+    int n, i;
+    cin >> n;
+    // 采用邻接表的来存储无向图
+    vector<int> graph[n + 1];
+    int x, y, visited[n + 1];
+    // 标记为未访问过
+    fill(visited, visited + n + 1, 0);
+    for (i = 0; i < n - 1; i++)
+    {
+        cin >> x >> y;
+        graph[x].push_back(y);
+        graph[y].push_back(x);
+    }
+    vector<int> res;
+    int maxheight = 0;
+    int k = 0;
+    for (int j = 1; j <= n; j++)
+    {
+        if (visited[j] == 0)
+        {
+            dfs_1021(graph, visited, j, 1, maxheight, res);
+            k++;
+        }
+    }
+    if (k > 1)
+        printf("Error: %d components\n", k);
+    else
+    {
+        int nodes[n + 1], node = res[0];
+        fill(nodes, nodes + n + 1, 0);
+        for (i = 0; i < res.size(); i++)
+            nodes[res[i]]++;
+        res.clear();
+        fill(visited, visited + n + 1, 0);
+        maxheight = 0;
+        dfs_1021(graph, visited, node, 1, maxheight, res);
+        for (i = 0; i < res.size(); i++)
+            nodes[res[i]]++;
+        for (i = 1; i <= n; i++)
+        {
+            if (nodes[i] > 0)
+                cout << i << endl;
+        }
+    }
+}
+
+void pat_1090()
+{
+
+    // n the total number of the numbers in the supply chain
+    int n;
+    // p is the original price
+    // r is the up rate in every convery
+    double p, r;
+    cin >> n >> p >> r;
+
+    // 拓扑图(无环，有向图)，采用树来模拟
+    vector<int> tree[n + 1];
+    // 构建树
+    int i, parent, root;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> parent;
+        if (parent == -1)
+            root = i;
+        else
+            tree[parent].push_back(i);
+    }
+
+    int size, height = 0, node;
+
+    // 采用树的层序遍历。即类似于图的 BFS 来寻找最长路径
+    queue<int> q;
+    q.push(root);
+    while (!q.empty())
+    {
+        size = q.size();
+        height++;
+        for (i = 0; i < size; i++)
+        {
+            node = q.front();
+            q.pop();
+            // 这里由于是有向无环图，每个节点只访问一次，故无需标记
+            for (int j = 0; j < tree[node].size(); j++)
+            {
+                q.push(tree[node][j]);
+            }
+        }
+    }
+    r = 1 + 0.01 * r;
+    double res = pow(r, height - 1) * p;
+    printf("%.2lf %d\n", res, size);
+}
+
 int main()
 {
-    pat_1143();
+    pat_1090();
     return 0;
 }
