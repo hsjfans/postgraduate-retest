@@ -1549,8 +1549,464 @@ void pat_1090()
     printf("%.2lf %d\n", res, size);
 }
 
+void pat_1040()
+{
+
+    string str;
+    getline(cin, str);
+    int i = 0, l = str.size() - 1, j = l, res = 1;
+    bool is[l + 1][l + 1];
+    fill(is[0], is[0] + (l + 1) * (l + 1), false);
+    // 标记 长度为1 和 2
+    for (i = 0; i <= l; i++)
+    {
+        is[i][i] = true;
+        if (i + 1 <= l && str[i + 1] == str[i])
+        {
+            is[i][i + 1] = true;
+            res = 2;
+        }
+    }
+    j = 3;
+    while (j <= l + 1)
+    {
+        for (i = 0; i + j - 1 <= l; i++)
+        {
+            int k = i + j - 1;
+            if (str[i] == str[k] && is[i + 1][k - 1])
+            {
+                res = j;
+                is[i][k] = true;
+            }
+        }
+        j++;
+    }
+
+    cout << res;
+}
+
+void pat_1030()
+{
+    int n, m, s, d;
+    cin >> n >> m >> s >> d;
+    // 距离,成本，路径以及是否访问过
+    int distance[n], costs[n], paths[n], visited[n];
+    int v[n][n], c[n][n];
+    fill(v[0], v[0] + n * n, 0);
+    fill(distance, distance + n, -1);
+    fill(costs, costs + n, -1);
+    fill(visited, visited + n, 0);
+    fill(paths, paths + n, s);
+    int i, x, y, dis, cost;
+    for (i = 0; i < m; i++)
+    {
+        cin >> x >> y >> dis >> cost;
+        v[x][y] = dis;
+        v[y][x] = dis;
+        c[x][y] = cost;
+        c[y][x] = cost;
+    }
+
+    // 最短路径问题
+    int visit = 0, cur = s, min_id = s, min;
+    visited[cur] = 1;
+    costs[cur] = 0;
+    distance[cur] = 0;
+    while (visit < n)
+    {
+        min = -1;
+        for (int k = 0; k < n; k++)
+        {
+            // 存在路径
+            if (v[cur][k] > 0 && !visited[k])
+            {
+                dis = v[cur][k] + distance[cur];
+                cost = c[cur][k] + costs[cur];
+                if (dis < distance[k] || distance[k] == -1)
+                {
+                    distance[k] = dis;
+                    paths[k] = cur;
+                    costs[k] = cost;
+                }
+                else if (dis == distance[k])
+                {
+                    if (cost < costs[k] || costs[k] == -1)
+                    {
+                        costs[k] = cost;
+                        paths[k] = cur;
+                    }
+                }
+            }
+            if (!visited[k] && (distance[k] < min || min == -1))
+            {
+                min = distance[k];
+                min_id = k;
+            }
+        }
+
+        cur = min_id;
+        visited[cur] = 1;
+        visit++;
+        if (cur == d)
+            break;
+    }
+
+    int count = 1, target = d;
+    string res = to_string(d) + " ";
+    while (d != paths[d])
+    {
+        res = to_string(paths[d]) + " " + res;
+        d = paths[d];
+        count++;
+    }
+    cout << res << count << " " << costs[target];
+}
+
+struct TreeNode
+{
+    int parent, left, right;
+};
+
+TreeNode nodes[100];
+vector<int> orders;
+
+void inorders(int parent)
+{
+    if (parent != -1)
+    {
+        TreeNode node = nodes[parent];
+        inorders(node.left);
+        orders.push_back(node.parent);
+        inorders(node.right);
+    }
+}
+
+void pat_1099()
+{
+    int n, parent = 0, i, j;
+    cin >> n;
+    // 构建树
+    for (i = 0; i < n; i++)
+    {
+        cin >> nodes[i].left >> nodes[i].right;
+        nodes[i].parent = i;
+    }
+    // 中序序列
+    inorders(parent);
+    int nums[n], maps[n];
+    // 建立起 中序序列与其索引之间的关系
+    for (i = 0; i < orders.size(); i++)
+        maps[orders[i]] = i;
+    for (i = 0; i < n; i++)
+        scanf("%d", &nums[i]);
+    // 中序序列为有序序列
+    sort(nums, nums + n);
+    queue<TreeNode> q;
+    q.push(nodes[0]);
+    int size = 1;
+    // 层序遍历，打印结果
+    while (!q.empty())
+    {
+        size = q.size();
+        for (j = 0; j < size; j++)
+        {
+            TreeNode node = q.front();
+            q.pop();
+            if (node.parent != 0)
+                cout << " ";
+            cout << nums[maps[node.parent]];
+            if (node.left != -1)
+                q.push(nodes[node.left]);
+            if (node.right != -1)
+                q.push(nodes[node.right]);
+        }
+    }
+}
+
+struct BinaryNode
+{
+    int left, right, data, level;
+};
+
+void pat_1115()
+{
+    int n, val, i;
+    cin >> n;
+    BinaryNode nodes[n];
+    for (i = 0; i < n; i++)
+    {
+        cin >> val;
+        nodes[i] = {-1, -1, val, 0};
+    }
+    int root = 0, cur, maxLevel = 0;
+    for (i = 1; i < n; i++)
+    {
+        root = 0;
+        while (root != -1)
+        {
+            if (nodes[root].data >= nodes[i].data)
+            {
+                cur = nodes[root].left;
+                if (cur == -1)
+                {
+                    nodes[root].left = i;
+                    nodes[i].level = nodes[root].level + 1;
+                }
+            }
+            else
+            {
+                cur = nodes[root].right;
+                if (cur == -1)
+                {
+                    nodes[root].right = i;
+                    nodes[i].level = nodes[root].level + 1;
+                }
+            }
+            maxLevel = max(maxLevel, nodes[i].level);
+            root = cur;
+        }
+    }
+
+    int prelevel = 0, curlevel = 0;
+    for (i = 0; i < n; i++)
+    {
+        if (nodes[i].level == maxLevel)
+            curlevel++;
+        else if (nodes[i].level == maxLevel - 1)
+            prelevel++;
+    }
+    printf("%d + %d = %d\n", curlevel, prelevel, curlevel + prelevel);
+}
+
+struct avl_node
+{
+    struct avl_node *left, *right;
+    int data, height;
+};
+typedef struct avl_node *AvlTree, *AvlNode;
+
+int height(AvlNode k)
+{
+    return k ? k->height : -1;
+}
+
+// lr 旋转
+AvlNode left_right_rotate(AvlNode k2)
+{
+    AvlNode k1 = k2->left;
+    k2->left = k1->right;
+    k1->right = k2;
+
+    k2->height = max(height(k2->left), height(k2->right)) + 1;
+    k1->height = max(height(k1->left), height(k1->right)) + 1;
+    return k1;
+}
+
+// rl 旋转
+AvlNode right_left_rotate(AvlNode k1)
+{
+    AvlNode k2 = k1->right;
+    k1->right = k2->left;
+    k2->left = k1;
+
+    k1->height = max(height(k1->left), height(k1->right)) + 1;
+    k2->height = max(height(k2->left), height(k2->right)) + 1;
+    return k2;
+}
+
+// ll 旋转
+AvlNode left_left_rotate(AvlNode k3)
+{
+    k3->left = right_left_rotate(k3->left);
+    return left_right_rotate(k3);
+}
+
+// rr 旋转
+AvlNode right_right_rotate(AvlNode k1)
+{
+    k1->right = left_right_rotate(k1->right);
+    return right_left_rotate(k1);
+}
+
+AvlNode insert(AvlNode t, int val)
+{
+    if (!t)
+    {
+        t = new avl_node();
+        t->data = val;
+        t->height = 0;
+        t->left = t->right = nullptr;
+        return t;
+    }
+    // self-check
+    if (t->data > val)
+    {
+        t->left = insert(t->left, val);
+        if (height(t->left) - height(t->right) == 2)
+        {
+            // lr 旋转
+            if (t->left->data > val)
+                t = left_right_rotate(t);
+            else
+                t = left_left_rotate(t);
+        }
+    }
+    else
+    {
+        t->right = insert(t->right, val);
+        if (height(t->right) - height(t->left) == 2)
+        {
+            // rl 旋转
+            if (t->right->data < val)
+                t = right_left_rotate(t);
+            else
+                t = right_right_rotate(t);
+        }
+    }
+    t->height = max(height(t->left), height(t->right)) + 1;
+    return t;
+}
+
+bool level_loop(AvlNode tree)
+{
+    queue<AvlNode> q;
+    q.push(tree);
+    int flag = 1;
+    bool complete = true, leaf = false, falg = true;
+    while (!q.empty())
+    {
+        AvlNode node = q.front();
+        q.pop();
+        if (!flag)
+            cout << " ";
+        else
+            flag = false;
+        cout << node->data;
+        if (node->left)
+            q.push(node->left);
+        if (node->right)
+            q.push(node->right);
+        if (!node->left && node->right)
+            complete = false;
+        if (leaf && (node->left || node->right))
+            complete = false;
+        if (!node->left || !node->right)
+            leaf = true;
+    }
+    cout << endl;
+    return complete;
+}
+
+void pat_1123()
+{
+
+    int n, i, val;
+    cin >> n;
+    AvlTree root = nullptr;
+    for (i = 0; i < n; i++)
+    {
+        cin >> val;
+        root = insert(root, val);
+    }
+    bool complete = level_loop(root);
+    if (complete)
+        cout << endl
+             << "YES";
+    else
+        cout << endl
+             << "NO";
+}
+
+struct RBNode
+{
+    struct RBNode *left, *right;
+    int key;
+};
+
+int getheight(RBNode *root)
+{
+    if (!root)
+        return 0;
+    int l = getheight(root->left);
+    int r = getheight(root->right);
+    return root->key > 0 ? max(l, r) + 1 : max(l, r);
+}
+
+RBNode *insertRBTree(RBNode *root, int val)
+{
+    if (!root)
+    {
+        root = new RBNode();
+        root->left = root->right = nullptr;
+        root->key = val;
+    }
+    else
+    {
+        if (abs(val) <= abs(root->key))
+        {
+            root->left = insertRBTree(root->left, val);
+        }
+        else
+            root->right = insertRBTree(root->right, val);
+    }
+    return root;
+}
+
+// 判断是非为 rb tree
+bool isRBTree(RBNode *root)
+{
+    // 采用 层序遍历 来判断是否符合要求
+    queue<RBNode *> q;
+    q.push(root);
+    bool is = true;
+    while (!q.empty() && is)
+    {
+        RBNode *node = q.front();
+        q.pop();
+        if (node->left)
+        {
+            q.push(node->left);
+        }
+        if (node->right)
+        {
+            q.push(node->right);
+        }
+        int left = getheight(node->left), right = getheight(node->right);
+        if (left != right)
+            is = false;
+        if (node->key < 0)
+        {
+            if (!((!node->left && !node->right) || (node->left && node->left->key > 0 && node->right && node->right->key > 0)))
+                is = false;
+        }
+        else if (node->key == 0)
+            is = false;
+    }
+    return is;
+}
+
+void pat_1135()
+{
+    int k, i, j, n, val;
+    cin >> k;
+    for (i = 0; i < k; i++)
+    {
+        cin >> n;
+        RBNode *root = nullptr;
+        for (j = 0; j < n; j++)
+        {
+            cin >> val;
+            root = insertRBTree(root, val);
+        }
+        if (root->key < 0 || !isRBTree(root))
+            cout << "No" << endl;
+        else
+            cout << "Yes" << endl;
+    }
+}
+
 int main()
 {
-    pat_1090();
+    pat_1135();
     return 0;
 }
