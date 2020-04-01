@@ -2005,8 +2005,251 @@ void pat_1135()
     }
 }
 
+void pat_1154()
+{
+
+    int n, m;
+    cin >> n >> m;
+    int i, v1, v2, visited[n];
+    vector<int> vertices[n];
+    for (i = 0; i < m; i++)
+    {
+        cin >> v1 >> v2;
+        vertices[v1].push_back(v2);
+        vertices[v2].push_back(v1);
+    }
+    int k;
+    cin >> k;
+    for (int j = 0; j < k; j++)
+    {
+        int color = 0, colors[n], num = 0;
+        map<int, int> maps;
+        fill(visited, visited + n, 0);
+        for (i = 0; i < n; i++)
+        {
+            cin >> color;
+            if (maps.count(color) == 0)
+            {
+                num++;
+                maps[color] = 1;
+            }
+            colors[i] = color;
+        }
+        bool ok = true;
+        for (i = 0; i < n; i++)
+        {
+            if (!visited[i])
+            {
+                for (int k = 0; k < vertices[i].size(); k++)
+                {
+                    if (!visited[vertices[i][k]])
+                    {
+                        if (colors[i] == colors[vertices[i][k]])
+                        {
+                            ok = false;
+                            break;
+                        }
+                    }
+                }
+                visited[i] = 1;
+            }
+        }
+        if (ok)
+            printf("%d-coloring\n", num);
+        else
+            cout << "No" << endl;
+    }
+}
+
+void pat_1107()
+{
+    int n;
+    cin >> n;
+    int vistsied[n + 1], tags[n + 1];
+    vector<int> graphs[n + 1];
+    fill(vistsied, vistsied + n + 1, 0);
+    int hobby, i, k;
+    vector<int> hobbies[1001];
+    for (i = 1; i <= n; i++)
+    {
+        scanf("%d:", &k);
+        for (int j = 0; j < k; j++)
+        {
+            cin >> hobby;
+            graphs[i].push_back(hobby);
+            hobbies[hobby].push_back(i);
+        }
+    }
+
+    k = 0;
+    vector<int> res;
+    for (i = 1; i <= n; i++)
+    {
+        if (!vistsied[i])
+        {
+            k++;
+            int num = 1;
+            fill(tags, tags + n + 1, 0);
+            // bfs or dfs 图的遍历
+            queue<int> q;
+            q.push(i);
+            vistsied[i] = 1;
+            tags[i] = 1;
+            while (!q.empty())
+            {
+                int v = q.front();
+                q.pop();
+                for (int j = 0; j < graphs[v].size(); j++)
+                {
+                    int h = graphs[v][j];
+                    for (int t = 0; t < hobbies[h].size(); t++)
+                    {
+                        if (!tags[hobbies[h][t]])
+                        {
+                            vistsied[hobbies[h][t]] = 1;
+                            tags[hobbies[h][t]] = 1;
+                            q.push(hobbies[h][t]);
+                            num++;
+                        }
+                    }
+                }
+            }
+            res.push_back(num);
+        }
+    }
+
+    sort(res.begin(), res.end());
+
+    cout << k << endl;
+    for (i = res.size() - 1; i >= 0; i--)
+    {
+        cout << res[i];
+        if (i != 0)
+            cout << " ";
+    }
+}
+
+int stationLines[10000] = {-1};
+int stations[10000][10000] = {0};
+
+//  采用 bfs 即可
+void bfs_1131(int start, int end)
+{
+    int visisted[10000] = {0}, paths[10000] = {start}, weight = -1;
+    queue<int> q;
+    q.push(start);
+    visisted[start] = 1;
+    int size, i, flag = 1;
+    while (!q.empty() && flag)
+    {
+        size = q.size();
+        for (i = 0; i < size; i++)
+        {
+            int node = q.front();
+            q.pop();
+            if (node == end)
+            {
+                flag = 0;
+                break;
+            }
+            for (int j = 0; j < 10000; j++)
+            {
+                if (!visisted[j] && stations[node][j] == 1)
+                {
+                    paths[j] = node;
+                    visisted[j] = 1;
+                    q.push(j);
+                }
+            }
+        }
+        weight++;
+    }
+    cout << weight << endl;
+    vector<int> res;
+    res.push_back(end);
+    while (end != start)
+    {
+        end = paths[end];
+        res.push_back(end);
+    }
+
+    int len = res.size() - 1;
+    int prev = res[len--], x = stationLines[prev], node, line;
+    while (len >= 0)
+    {
+        node = res[len];
+        line = stationLines[node];
+        if (len == 0)
+            printf("Take Line#%d from %d to %d.\n", x, prev, node);
+        else if (line != x)
+        {
+            printf("Take Line#%d from %d to %d.\n", x, prev, res[len - 1]);
+            if (len != 0)
+            {
+                prev = res[len - 1];
+                x = line;
+            }
+        }
+        len--;
+    }
+}
+
+void pat_1131()
+{
+    int n, k;
+    cin >> n;
+
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> k;
+        int prev = -1, s;
+        for (int j = 0; j < k; j++)
+        {
+            cin >> s;
+            stationLines[s] = i;
+            if (prev != -1 && prev != s)
+            {
+                stations[prev][s] = 1;
+                stations[s][prev] = 1;
+            }
+            prev = s;
+        }
+    }
+    int m, start, end;
+    cin >> m;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> start >> end;
+        bfs_1131(start, end);
+    }
+}
+
+void pat_1048()
+{
+    int n, m;
+    cin >> n >> m;
+    int maps[m];
+    fill(maps, maps + m, 0);
+    int v1 = m, coin;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> coin;
+        if (m > coin)
+        {
+            if (maps[coin] == 1)
+                v1 = min(coin, min(m - coin, v1));
+            else
+                maps[m - coin] = 1;
+        }
+    }
+    if (v1 != m)
+        cout << v1 << " " << m - v1;
+    else
+        cout << "No Solution" << endl;
+}
+
 int main()
 {
-    pat_1135();
+    pat_1048();
     return 0;
 }
