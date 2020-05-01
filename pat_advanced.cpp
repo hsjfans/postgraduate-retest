@@ -2247,9 +2247,3 @@ void pat_1048()
     else
         cout << "No Solution" << endl;
 }
-
-int main()
-{
-    pat_1048();
-    return 0;
-}
