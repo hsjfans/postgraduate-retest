@@ -1706,13 +1706,311 @@ int findInMountainArray(int target, MountainArray &mountainArr)
 {
     return findInMountain(target, 0, mountainArr.length() - 1, mountainArr);
 }
+string minWindow(string s, string t)
+{
+    unordered_map<char, int> need, windows;
+    for (char c : t)
+        need[c]++;
+    int left = 0, right = 0, start = 0, n = s.size();
+    int cur = n + 1;
+    char c;
+    int match = 0;
+    while (right < n)
+    {
+        c = s[right];
+        if (need.count(c))
+        {
+            windows[c]++;
+            if (windows[c] == need[c])
+                match++;
+        }
+        right++;
+        while (match == need.size())
+        {
+            if (right - left < cur)
+            {
+                cur = right - left;
+                start = left;
+            }
+            c = s[left];
+            if (need.count(c))
+            {
+                windows[c]--;
+                if (windows[c] < need[c])
+                    match--;
+            }
+            left++;
+        }
+    }
+
+    return cur == n + 1 ? "" : s.substr(start, cur);
+}
+
+bool isMatch(string s, int left, int right, string t)
+{
+
+    int m = t.size(), i = 0;
+    while (left <= right && i < m)
+    {
+        if (s[left] == t[i])
+            i++;
+        left++;
+    }
+
+    return i == m;
+}
+
+/**
+     * @param S: a string
+     * @param T: a string
+     * @return: the minimum substring of S
+     */
+string minWindow2(string s, string t)
+{
+    // Write your code here
+    int left = 0, right = 0, start = 0, n = s.size(), cur = n + 1, m = t.size();
+    while (right < n)
+    {
+
+        if (!isMatch(s, left, right, t))
+            right++;
+        else
+        {
+            if (right - left + 1 > cur)
+            {
+                cur = right - left + 1;
+                start = left;
+            }
+            left++;
+        }
+    }
+
+    return cur == n + 1 ? "" : s.substr(start, cur);
+}
+
+int findNumberOfLIS(vector<int> &nums)
+{
+    int n = nums.size();
+    if (n <= 1)
+        return n;
+    int dp[n];
+    for (int i = 0; i < n; i++)
+        dp[i] = 1;
+    int ans = 1, res = n;
+    int step = 0, cur = 0;
+    for (int i = 1; i < n; i++)
+    {
+        step = 0;
+        cur = 0;
+        for (int j = i - 1; j >= 0; j--)
+        {
+            if (nums[i] > nums[j])
+            {
+                dp[i] = max(dp[i], dp[j] + 1);
+                if (dp[i] > cur)
+                {
+                    cur = dp[i];
+                    step = 1;
+                }
+                else if (dp[i] = cur)
+                    step++;
+            }
+        }
+        if (cur == ans)
+            res += step;
+        else if (cur > ans)
+        {
+            ans = dp[i];
+            res = step;
+        }
+    }
+
+    return res;
+}
+
+int numberOfArithmeticSlices(vector<int> &A)
+{
+    int n = A.size();
+    unordered_map<int, int> dp[n];
+    int ans = 0, k;
+    // for(int i=0;i<n;i++) dp[0][A[i]-A[0]] = 1;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            k = A[j] - A[i];
+            dp[j][k] = (i == 0 ? dp[i][k] : 1) + 1;
+            if (dp[j][k] >= 3)
+                ans++;
+        }
+    }
+    return ans;
+}
+
+string reverseVowels(string s)
+{
+    map<char, int> maps = {{'a', 1}, {'e', 1}, {'i', 1}, {'o', 1}, {'u', 1}};
+    int prev = -1;
+    char c;
+    for (int i = 0; i < s.size(); i++)
+    {
+        c = s[i];
+        if (maps.count(c))
+        {
+            if (prev != -1)
+            {
+                s[i] = s[prev];
+                s[prev] = c;
+                prev = -1;
+            }
+            else
+                prev = i;
+        }
+    }
+    return s;
+}
+
+bool isBipartite(vector<vector<int>> &graph)
+{
+
+    // 着色 (color+1 )% 2
+    int color = 0;
+    int n = graph.size();
+    // 初识化无颜色
+    vector<int> colors(n, -1);
+    // 这里采用 bfs 方案
+    for (int i = 0; i < n; i++)
+    {
+        // 可能存在多个连通分量
+        if (colors[i] == -1)
+        {
+            queue<int> q;
+            // 初始着色为 0
+            q.push(i);
+            colors[i] = 0;
+            while (!q.empty())
+            {
+                int t = q.front();
+                q.pop();
+                for (int j = 0; j < graph[t].size(); j++)
+                {
+                    // 还没有着色
+                    if (colors[graph[t][j]] == -1)
+                    {
+                        colors[graph[t][j]] = (colors[t] + 1) % 2;
+                        q.push(graph[t][j]);
+                    }
+                    // 以及着色而且与
+                    else if (colors[graph[t][j]] == colors[t])
+                        return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+bool hasCycle(vector<vector<int>> &v, int idx, vector<int> &localvisited)
+{
+    // 缓存
+    // if(visited[idx]) return false;
+    localvisited[idx] = 1;
+    for (int i = 0; i < v[idx].size(); i++)
+    {
+        if (localvisited[v[idx][i]])
+            return true;
+        else if (hasCycle(v, v[idx][i], localvisited))
+            return true;
+    }
+    // visited[idx] = 1;
+    return false;
+}
+
+bool canFinish2(int numCourses, vector<vector<int>> &prerequisites)
+{
+
+    // 拓扑排序
+    // 采用邻接表表示有向图
+    vector<vector<int>> v;
+    for (int i = 0; i < numCourses; i++)
+        v.push_back({});
+
+    for (int i = 0; i < prerequisites.size(); i++)
+        v[prerequisites[i][0]].push_back(prerequisites[i][1]);
+    // 是否访问过
+    // vector<int> visited(numCourses, 0);
+    for (int i = 0; i < numCourses; i++)
+    {
+        vector<int> localvisited(numCourses, 0);
+        if (hasCycle(v, i, localvisited))
+            return false;
+    }
+    return true;
+}
+
+// dp 0-1 背包问题
+void package(vector<int> &nums)
+{
+    int n = nums.size(), sum = 0;
+    for (int num : nums)
+        sum += num;
+    int target = sum / 2;
+    // 不能重复时
+    vector<bool> dp(target + 1, 0);
+    dp[0] = true;
+    for (int num : nums)
+    {
+        for (int i = num; i <= target; i++)
+        {
+            dp[i] = dp[i] || dp[i - num];
+        }
+    }
+    int b = 0;
+    for (int i = target; i >= 0; i--)
+    {
+        if (dp[i])
+        {
+            b = i;
+            break;
+        }
+    }
+    printf("%d %d\n", b, sum - b);
+}
 
 int main()
 {
 
-    // vector<vector<int>> clips1{{5, 3}, {3, 0}, {5, 1}, {1, 1}, {1, 5}, {3, 0}, {0, 2}};
-    vector<int> time{0, 1, 2, 4, 2, 1};
-    MountainArray m = MountainArray(time);
-    findInMountainArray(3, m);
+    string str;
+    while (getline(cin, str))
+    {
+        bool ok = true;
+        for (int i = 0; i < str.size(); i++)
+        {
+            if (str[i] != ' ' && !(str[i] >= '0' && str[i] <= '9'))
+            {
+                ok = false;
+                break;
+            }
+        }
+        if (!ok)
+        {
+            cout << "ERROR" << endl;
+            continue;
+        }
+
+        vector<int> nums;
+        int prev = 0;
+        for (int i = 0; i < str.size(); i++)
+        {
+            char c = str[i];
+            if (c == ' ')
+            {
+                nums.push_back(stoi(str.substr(prev, i - prev)));
+                prev = i + 1;
+            }
+        }
+        nums.push_back(stoi(str.substr(prev, str.size() - prev)));
+        package(nums);
+    }
     return 0;
 }
