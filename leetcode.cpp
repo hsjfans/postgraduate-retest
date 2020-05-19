@@ -1977,40 +1977,167 @@ void package(vector<int> &nums)
     printf("%d %d\n", b, sum - b);
 }
 
-int main()
+int countTriplets(vector<int> &arr)
 {
 
-    string str;
-    while (getline(cin, str))
+    int ans = 0, sum = arr[0];
+    int n = arr.size();
+    if (n < 3)
+        return 0;
+    vector<int> sums;
+    for (int i = 0; i < n; i++)
     {
-        bool ok = true;
-        for (int i = 0; i < str.size(); i++)
-        {
-            if (str[i] != ' ' && !(str[i] >= '0' && str[i] <= '9'))
-            {
-                ok = false;
-                break;
-            }
-        }
-        if (!ok)
-        {
-            cout << "ERROR" << endl;
-            continue;
-        }
-
-        vector<int> nums;
-        int prev = 0;
-        for (int i = 0; i < str.size(); i++)
-        {
-            char c = str[i];
-            if (c == ' ')
-            {
-                nums.push_back(stoi(str.substr(prev, i - prev)));
-                prev = i + 1;
-            }
-        }
-        nums.push_back(stoi(str.substr(prev, str.size() - prev)));
-        package(nums);
+        if (i != 0)
+            sum = sum ^ arr[i];
+        sums.push_back(sum);
     }
+    int a, b;
+    // vector<vector<int>> dp(n+1,vector<int>(n+1,0));
+    for (int i = 0; i < n - 2; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            for (int k = j; k < n; k++)
+            {
+                a = (i == 0) ? sums[j - 1] : sums[i - 1] ^ sums[j - 1];
+                b = sums[k] ^ sums[j - 1];
+                // 2 3 1 6 7. i = 0  j =1 2
+                // 0,1,2), (0,2,2), (2,3,4) 以及 (2,4,4)
+                if (a == b)
+                    ans++;
+            }
+        }
+    }
+
+    return ans;
+}
+
+int dis(map<int, vector<int>> &v, int node, vector<int> &visited, vector<bool> &hasApple)
+{
+
+    visited[node] = 1;
+    int ans = 0, res = 0, flag = 0;
+    for (int i = 0; i < v[node].size(); i++)
+    {
+        if (!visited[v[node][i]])
+        {
+            ans = dis(v, v[node][i], visited, hasApple);
+            if (ans != -1)
+            {
+                res += ans + 2;
+                flag = 1;
+            }
+        }
+    }
+    if (hasApple[node] && !flag)
+        return 0;
+    else if (!flag)
+        return -1;
+    else
+        return res;
+}
+
+int minTime(int n, vector<vector<int>> &edges, vector<bool> &hasApple)
+{
+
+    map<int, vector<int>> v;
+    for (vector<int> edge : edges)
+    {
+        v[edge[0]].push_back(edge[1]);
+        v[edge[1]].push_back(edge[0]);
+    }
+    vector<int> visited(n, 0);
+    int ans = dis(v, 0, visited, hasApple);
+    return ans == -1 ? 0 : ans;
+}
+
+vector<string> printVertically(string s)
+{
+
+    vector<string> words;
+    vector<string> ans;
+    int prev = 0, len = 0;
+    string tmp;
+    for (int i = 1; i < s.size(); i++)
+    {
+        if (s[i] == ' ')
+        {
+            tmp = s.substr(prev, i - prev);
+            prev = i + 1;
+            words.push_back(tmp);
+        }
+        else if (i + 1 == s.size())
+        {
+            tmp = s.substr(prev, i - prev + 1);
+            words.push_back(tmp);
+        }
+        len = max((int)(tmp.size()), len);
+    }
+
+    for (int i = 0; i < len; i++)
+    {
+        string word;
+        for (int j = 0; j < words.size(); j++)
+        {
+            if (words[j].size() <= i && word.size() > 0)
+                word += ' ';
+            else
+                word += words[j][i];
+        }
+        int j = word.size() - 1;
+        for (; j >= 0 && word[j] == ' '; j--)
+        {
+        }
+        ans.push_back(word.substr(0, j + 1));
+    }
+
+    return ans;
+}
+
+int totalFruit(vector<int> &tree)
+{
+
+    int ans = 0, left = 0, right = -1, num1 = 1, num2 = 0;
+    for (int i = 1; i < tree.size(); i++)
+    {
+        if (tree[i] == tree[left])
+        {
+            left = i;
+            num1++;
+        }
+        else if (right == -1 || tree[i] == tree[right])
+        {
+            right = i;
+            num2++;
+        }
+        else
+        {
+            ans = max(ans, num1 + num2);
+            if (left < right)
+            {
+                num1 = right - left;
+                left = right;
+                right = i;
+                num2 = 1;
+            }
+            else
+            {
+                num1 = 1;
+                right = i;
+                num2 = 1;
+            }
+        }
+    }
+
+    return ans = max(ans, num1 + num2);
+}
+
+int main()
+{
+    // vector<vector<int>> p{{0, 1}, {0, 2}, {1, 4}, {1, 5}, {2, 3}, {2, 6}};
+    // vector<bool> ans{false, false, false, false, false, false, false};
+    // printVertically("CONTEST IS COMING");
+    vector<int> ans{1,0,1,4,1,4,1,2,3};
+    totalFruit(ans);
     return 0;
 }
